@@ -1,0 +1,16 @@
+enum Tokens {
+    Token_indentifier,
+    Token_assignment,
+    Token_real,
+    Token_string,
+    Token_addition,
+    Token_subtraction,
+    Token_multiplication,
+    Token_division,
+    Token_o_paren,
+    Token_c_paren,
+    Token_s_o_paren,
+    Token_s_c_paren,
+    Token_c_o_paren,
+    Token_c_c_paren,
+};
