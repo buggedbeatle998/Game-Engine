@@ -137,14 +137,14 @@ std::vector<std::pair<int,std::string>> _to_token(std::string line) {
     return Token_a;
 }
 
-// int main() {
-//     std::string stringed;
-//     std::getline(std::cin >> std::ws, stringed);
-//     std::vector tokened=_to_token("testing=\"Hello World`\'\"+str(3_6.64)");
-//     for (int i=0;i<tokened.size();i++) {
-//         std::cout << tokened[i].first << "\n";
-//         std::cout << tokened[i].second << "\n";
-//     }
-//     std::system("pause");
-//     return 0;
-// }
+int main() {
+    std::string stringed;
+    std::getline(std::cin >> std::ws, stringed);
+    std::vector tokened=_to_token("testing=\"Hello World`\'\"+str(3_6.64)");
+    for (int i=0;i<tokened.size();i++) {
+        std::cout << tokened[i].first << "\n";
+        std::cout << tokened[i].second << "\n";
+    }
+    std::system("pause");
+    return 0;
+}
