@@ -56,7 +56,7 @@ std::vector<std::pair<int,std::string>> _to_token(std::string line) {
         }
 
         //string
-        if (str_i=="\""||str_i=="\'"||str_i=="`") {
+        if (str_i=="\""||str_i=="\'") {
             std::string _temp=str_i;
             std::string _string="";
             str_i=line.at(place);
@@ -91,6 +91,11 @@ std::vector<std::pair<int,std::string>> _to_token(std::string line) {
         //division
         if (str_i=="/") {
             Token_a.push_back(std::make_pair(Token_division,str_i));
+            continue;
+        }
+
+        if (str_i==",") {
+            Token_a.push_back(std::make_pair(Token_addition,str_i));
             continue;
         }
 
@@ -130,6 +135,21 @@ std::vector<std::pair<int,std::string>> _to_token(std::string line) {
             continue;
         }
 
+        if (str_i=="`") {
+            Token_a.push_back(std::make_pair(Token_hasher,str_i));
+            continue;
+        }
+
+        if (str_i=="?") {
+            Token_a.push_back(std::make_pair(Token_1_tenary,str_i));
+            continue;
+        }
+
+        if (str_i==":") {
+            Token_a.push_back(std::make_pair(Token_0_tenary,str_i));
+            continue;
+        }
+
         std::invalid_argument("Unknown Token: "+str_i);
     } while (place<line.length());
 
@@ -137,14 +157,14 @@ std::vector<std::pair<int,std::string>> _to_token(std::string line) {
     return Token_a;
 }
 
-int main() {
-    std::string stringed;
-    std::getline(std::cin >> std::ws, stringed);
-    std::vector tokened=_to_token("testing=\"Hello World`\'\"+str(3_6.64)");
-    for (int i=0;i<tokened.size();i++) {
-        std::cout << tokened[i].first << "\n";
-        std::cout << tokened[i].second << "\n";
-    }
-    std::system("pause");
-    return 0;
-}
+// int main() {
+//     std::string stringed;
+//     std::getline(std::cin >> std::ws, stringed);
+//     std::vector tokened=_to_token(stringed);
+//     for (int i=0;i<tokened.size();i++) {
+//         std::cout << tokened[i].first << "\n";
+//         std::cout << tokened[i].second << "\n";
+//     }
+//     std::system("pause");
+//     return 0;
+// }
