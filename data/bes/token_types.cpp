@@ -1,8 +1,10 @@
 #include <string>
-#include <variant>
-#include <iostream>
+#include <vector>
+#include <memory>
+
 
 enum Tokens {
+    Token_newline,
     Token_indentifier,
     Token_assignment,
     Token_real,
@@ -23,37 +25,54 @@ enum Tokens {
     Token_0_tenary,
 };
 
-class ASTNode {
+enum Nodes {
+    Node_real,
+    Node_binaryop,
+    Node_hash,
+    Node_variable,
+    Node_call,
+    Node_assignment,
+};
 
+class ASTNode {
+    public:
+        int name;
 };
 
 class RealNode : public ASTNode {
     public:
+        int name=Node_real;
         long double real;
 };
 
 class BinaryOpNode : public ASTNode {
     public:
+        int name=Node_binaryop;
         int operate;
         std::unique_ptr<ASTNode> left;
         std::unique_ptr<ASTNode> right;
 };
 
 class HashNode : public ASTNode {
+    public:
+        int name=Node_hash;
 };
 
 class VariableNode : public ASTNode {
     public:
+        int name=Node_variable;
         std::string identifier;
 };
 class CallNode : public ASTNode {
     public:
+        int name=Node_call;
         std::string identifier;
         std::vector<std::unique_ptr<ASTNode>> args;
 };
 
 class AssignmentNode : public ASTNode {
     public:
+        int name=Node_assignment;
         std::unique_ptr<VariableNode> variable;
         std::unique_ptr<ASTNode> value;
 };

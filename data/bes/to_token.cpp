@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <regex>
+#include <memory>
 
 std::vector<std::pair<int,std::string>> _to_token(std::string line) {
     //declaration
@@ -16,6 +17,12 @@ std::vector<std::pair<int,std::string>> _to_token(std::string line) {
 
         //ignore whitespace except newline
         if (str_i==" "||str_i=="\t") {
+            continue;
+        }
+
+        if (str_i==";"||str_i=="\n")
+        {
+            Token_a.push_back(std::make_pair(Token_newline,str_i));
             continue;
         }
 
@@ -50,7 +57,8 @@ std::vector<std::pair<int,std::string>> _to_token(std::string line) {
                 place++;
             }
             if (std::count(std::begin(_real),std::end(_real),'.')>1) throw std::invalid_argument("Invalid Real: "+_real);
-            if (_real.at(_real.length()-1)) _real=_real.erase(_real.length()-1,_real.length());
+            if (std::count(std::begin(_real),std::end(_real),'.')==0) _real+=".0";
+            else if (_real.at(_real.length()-1)=='.') _real+="0";
             Token_a.push_back(std::make_pair(Token_real,_real));
             continue;
         }
