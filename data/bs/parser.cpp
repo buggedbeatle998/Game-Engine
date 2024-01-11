@@ -9,12 +9,16 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
     std::vector<std::pair<int,std::string>> t_program=_to_token(line+";");
     std::vector<std::unique_ptr<ASTNode>> node_tree;
     std::pair<std::unique_ptr<ASTNode>,int> _parsed;
+    std::pair<std::unique_ptr<ASTNode>,int> _parsedn;
     int t_counter=0;
+
     struct parsers {
         static std::pair<std::unique_ptr<ASTNode>,int> parse(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
             switch (t_program[t_counter].first) {
                 case Token_newline:
                     t_counter++;
+                    ASTNode __temp;
+                    return std::make_pair(std::make_unique<ASTNode>(__temp),-1);
                 break;
 
                 case Token_indentifier:
@@ -50,7 +54,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
             } while (t_program[t_counter].first!=Token_c_paren);
 
             t_counter++;
-            
+
             return std::make_pair(std::make_unique<ASTNode>(__temp),t_counter);
         }
 
@@ -65,17 +69,17 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
 
     do {
         _parsed=parsers::parse(t_program,t_counter);
-
-        node_tree.push_back(std::move(_parsed.first));
         t_counter=_parsed.second;
+        _parsedn=parsers::parse(t_program,t_counter);
+        node_tree.push_back(std::move((_parsedn.second==-1 ? _parsed : _parsedn).first));
     } while (t_counter<t_program.size());
 
     return node_tree;
 }
 
-// int main() {
-//     std::string stringed;
-//     std::getline(std::cin >> std::ws, stringed);
-//     std::vector tokened=parser(stringed);
-//     return 0;
-// }
+int main() {
+    std::string stringed;
+    std::getline(std::cin >> std::ws, stringed);
+    std::vector tokened=parser(stringed);
+    return 0;
+}
