@@ -25,24 +25,33 @@ std::string _to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
             ASTNode ast_node=*ast_node_ptr;
             switch (ast_node.name) {
                 case Node_call:
-                    emit_call(ast_node_ptr);
+                    return emit_call(std::move(ast_node_ptr));
                 break;
             }
+            return "";
         }
 
         static std::string emit_call(std::unique_ptr<ASTNode> ast_node_ptr) {
-            CallNode ast_node=*ast_node_ptr;
-            switch (hash_djb2a(ast_node.identifier)) {
-                case ("print"_sh):
-                    return "std::cout <<";
-                break;
-            }
+            ASTNode ast_node=*ast_node_ptr;
+            // switch (hash_djb2a(ast_node.identifier)) {
+            //     case ("print"_sh):
+            //         return "std::cout <<";
+            //     break;
+            // }
+            return "";
         }
     };
+
+    do {
+        _cpp=emmiters::emit(move(ast_tree[0]));
+    } while (true);
 
     return _cpp;
 }
 
 int main() {
+    std::string stringed;
+    std::getline(std::cin >> std::ws, stringed);
+    std::string tokened=_to_cpp(parser(stringed));
     return 0;
 }

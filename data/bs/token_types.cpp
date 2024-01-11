@@ -37,6 +37,14 @@ enum Nodes {
 class ASTNode {
     public:
         int name;
+    // long double real;
+    // int operate;
+    // std::unique_ptr<ASTNode> left;
+    // std::unique_ptr<ASTNode> right;
+    // std::string identifier;
+    // std::vector<std::unique_ptr<ASTNode>> args;
+    // std::unique_ptr<VariableNode> variable;
+    // std::unique_ptr<ASTNode> value;
 };
 
 class RealNode : public ASTNode {

@@ -14,6 +14,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
         static std::pair<std::unique_ptr<ASTNode>,int> parse(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
             switch (t_program[t_counter].first) {
                 case Token_newline:
+                    t_counter++;
                 break;
 
                 case Token_indentifier:
@@ -30,8 +31,9 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
                     throw std::invalid_argument("Wowie, if you're reading this you've probally done something really really wrong and you should probally rethink your life choises instead of creating whatever the fuck this is: "+t_program[t_counter].second);
                 break;
             };
+            t_counter++;
             ASTNode __temp;
-            return std::make_pair(std::make_unique<ASTNode>(__temp),0);
+            return std::make_pair(std::make_unique<ASTNode>(__temp),t_counter);
         }
 
         static std::pair<std::unique_ptr<ASTNode>,int> parse_callExpression(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
