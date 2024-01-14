@@ -36,7 +36,9 @@ enum Nodes {
 
 class ASTNode {
     public:
+        virtual ~ASTNode() = default;
         int name;
+        //virtual void placeholder() {}
     // long double real;
     // int operate;
     // std::unique_ptr<ASTNode> left;

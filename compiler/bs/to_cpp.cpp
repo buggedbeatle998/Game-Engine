@@ -22,8 +22,9 @@ std::string _to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
 
     struct emmiters {
         static std::string emit(std::unique_ptr<ASTNode> ast_node_ptr) {
-            ASTNode ast_node=*ast_node_ptr;
-            switch (ast_node.name) {
+            //std::unique_ptr<ASTNode> __temped=ast_node_ptr;
+            //ASTNode ast_node=*ast_node_ptr;
+            switch ((*ast_node_ptr).name) {
                 case Node_call:
                     return emit_call(std::move(ast_node_ptr));
                 break;
@@ -32,17 +33,23 @@ std::string _to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
         }
 
         static std::string emit_call(std::unique_ptr<ASTNode> ast_node_ptr) {
-            ASTNode ast_node=*ast_node_ptr;
-            // switch (hash_djb2a(ast_node.identifier)) {
-            //     case ("print"_sh):
-            //         return "std::cout <<";
-            //     break;
-            // }
+            CallNode* ast_node=dynamic_cast<CallNode*>(ast_node_ptr.get());
+            switch (hash_djb2a((*ast_node).identifier)) {
+                case ("print"_sh):
+                    std::cout << "did it!";
+                    return "std::cout <<";
+                break;
+
+                default:
+                    return "";
+                break;
+            }
             return "";
         }
     };
 
     do {
+        std::unique_ptr<ASTNode> __test=move(ast_tree[0]);
         _cpp=emmiters::emit(move(ast_tree[0]));
     } while (true);
 
@@ -53,5 +60,6 @@ int main() {
     std::string stringed;
     std::getline(std::cin >> std::ws, stringed);
     std::string tokened=_to_cpp(parser(stringed));
+    
     return 0;
 }
