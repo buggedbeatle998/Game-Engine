@@ -25,7 +25,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
     
 
     struct parsers {
-        static auto parse(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
+        static std::pair<std::unique_ptr<ASTNode>,int> parse(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
             //std::pair<std::unique_ptr<ASTNode>,int>
             switch (t_program[t_counter].first) {
                 case Token_newline:
@@ -64,7 +64,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
             do {
                 t_counter++;
                 auto __parsed=parsers::parse(t_program,t_counter);
-                __temp.args.push_back((__parsed.first));
+                __temp.args.push_back(__parsed.first);
                 t_counter=__parsed.second;
             } while (t_program[t_counter].first!=Token_c_paren);
 
