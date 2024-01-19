@@ -20,9 +20,10 @@ std::vector<std::pair<int,std::string>> _to_token(std::string line) {
             continue;
         }
 
+        //newlines
         if (str_i==";"||str_i=="\n")
         {
-            if (Token_a[Token_a.size()-1].first!=Token_newline)
+            if (Token_a[Token_a.size()-1].first!=Token_newline) //compresses multiple newlines down to one
                 Token_a.push_back(std::make_pair(Token_newline,str_i));
             continue;
         }

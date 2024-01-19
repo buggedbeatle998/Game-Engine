@@ -6,16 +6,9 @@
 #include <memory>
 #include <utility>
 
-// #ifdef _MSC_VER
-// #define _CRT_SECURE_NO_WARNINGS
-// #endif
+//This is the file that I'm having problems with. The Function Call Node. Initialized in token_types.
 
-// #ifdef __cplusplus
-// #include <cstdio>
-// #else
-// #include <stdio.h>
-// #endif
-
+//Parses into an ATS
 std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
     std::vector<std::pair<int,std::string>> t_program=_to_token(line+";");
     std::vector<std::unique_ptr<ASTNode>> node_tree;
@@ -23,10 +16,11 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
     std::pair<std::unique_ptr<ASTNode>,int> _parsedn;
     int t_counter=0;
     
-
+    //Parser functions
     struct parsers {
+
+        //Function that dectects which node to parse
         static std::pair<std::unique_ptr<ASTNode>,int> parse(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
-            //std::pair<std::unique_ptr<ASTNode>,int>
             switch (t_program[t_counter].first) {
                 case Token_newline:
                 {
@@ -47,14 +41,17 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
                 break;
 
                 default:
-                    throw std::invalid_argument("Wowie, if you're reading this you've probally done something really really wrong and you should probally rethink your life choises instead of creating whatever the fuck this is: "+t_program[t_counter].second);
+                    throw std::invalid_argument("I really don't think it's possible to get this error message. If you're getting this you're doing somethhing seriously wrong with this: "+t_program[t_counter].second);
                 break;
             };
+
+            //This code never happens
             t_counter++;
             ASTNode __temp;
             return std::make_pair(std::make_unique<ASTNode>(__temp),t_counter);
         }
 
+        //Parses Function Calls
         static std::pair<std::unique_ptr<CallNode>,int> parse_callExpression(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
             CallNode __temp;
             __temp.identifier=t_program[t_counter].second;
@@ -64,7 +61,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
             do {
                 t_counter++;
                 auto __parsed=parsers::parse(t_program,t_counter);
-                __temp.args.push_back(__parsed.first);
+                __temp.args.emplace_back(std::move(__parsed.first));
                 t_counter=__parsed.second;
             } while (t_program[t_counter].first!=Token_c_paren);
 
@@ -73,6 +70,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
             return std::make_pair(std::make_unique<CallNode>(__temp),t_counter);
         }
 
+        //Parse Real Numbers
         static std::pair<std::unique_ptr<RealNode>,int> parse_real(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
             RealNode __temp;
             __temp.real=stold(t_program[t_counter].second);
@@ -82,6 +80,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
         }
     };
 
+    //Parsing loop
     do {
         _parsed=parsers::parse(t_program,t_counter);
         t_counter=_parsed.second;
@@ -94,8 +93,9 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
     return node_tree;
 }
 
+//Test
 int main() {
-    // CallNode __temp;
+    //CallNode __temp;
     // __temp.args.emplace_back(std::move(__parsed.first));
     std::string stringed;
     std::getline(std::cin >> std::ws, stringed);

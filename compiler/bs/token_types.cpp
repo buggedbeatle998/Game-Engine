@@ -34,6 +34,7 @@ enum Nodes {
     Node_assignment,
 };
 
+//Parent class
 class ASTNode {
     public:
         virtual ~ASTNode() = default;
@@ -49,12 +50,14 @@ class ASTNode {
     // std::unique_ptr<ASTNode> value;
 };
 
+//Any real number
 class RealNode : public ASTNode {
     public:
         int name=Node_real;
         long double real;
 };
 
+//Plus, Minus, Divide, Multiplication
 class BinaryOpNode : public ASTNode {
     public:
         int name=Node_binaryop;
@@ -63,16 +66,21 @@ class BinaryOpNode : public ASTNode {
         std::unique_ptr<ASTNode> right;
 };
 
+//Allows Strings to turn into identifiers
 class HashNode : public ASTNode {
     public:
         int name=Node_hash;
+        std::string Token_indentifier;
 };
 
+//Variables
 class VariableNode : public ASTNode {
     public:
         int name=Node_variable;
         std::string identifier;
 };
+
+//Calls a function "indentifier(args)"
 class CallNode : public ASTNode {
     public:
         int name=Node_call;
@@ -80,6 +88,7 @@ class CallNode : public ASTNode {
         std::vector<std::unique_ptr<ASTNode>> args;
 };
 
+//Assigns a value to a variable
 class AssignmentNode : public ASTNode {
     public:
         int name=Node_assignment;
