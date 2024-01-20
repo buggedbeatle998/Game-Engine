@@ -31,13 +31,13 @@ class child2 : public base {
 // }
 
 int main() {
-    struct hhhhh {
-        static 
-    }
+    // struct hhhhh {
+    //     static 
+    // }
     child2 child2_;
     child1 _temp;
     _temp.name="hhh";
-    _temp.args.push_back(std::make_unique<child2>(child2_));
+    _temp.args.push_back(std::move(std::make_unique<child2>(child2_)));
     
     std::cout << "hi: " << (*(dynamic_cast<child2*>(_temp.args[0].get()))).name;
 

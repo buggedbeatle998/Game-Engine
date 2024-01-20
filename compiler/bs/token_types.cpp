@@ -84,15 +84,15 @@ class VariableNode : public ASTNode {
 class CallNode : public ASTNode {
     public:
         int name=Node_call;
-        std::string identifier;
-        std::vector<std::unique_ptr<ASTNode>> args;
+        std::unique_ptr<VariableNode> identifier;
+        std::vector<std::shared_ptr<ASTNode>> args;
 };
 
 //Assigns a value to a variable
 class AssignmentNode : public ASTNode {
     public:
         int name=Node_assignment;
-        std::unique_ptr<VariableNode> variable;
+        std::unique_ptr<VariableNode> identifier;
         std::unique_ptr<ASTNode> value;
 };
 

@@ -31,6 +31,10 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
                 }
 
                 case Token_indentifier:
+                    if (t_program[t_counter+1].first==Token_assignment) {
+                        return parse_assignment(t_program,t_counter);
+                    }
+
                     if (t_program[t_counter+1].first==Token_o_paren) {
                         return parse_callExpression(t_program,t_counter);
                     }
@@ -51,6 +55,24 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
             return std::make_pair(std::make_unique<ASTNode>(__temp),t_counter);
         }
 
+        //Parse Real Numbers
+        static std::pair<std::unique_ptr<RealNode>,int> parse_real(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
+            RealNode __temp;
+            __temp.real=stold(t_program[t_counter].second);
+            t_counter++;
+            
+            return std::make_pair(std::make_unique<RealNode>(__temp),t_counter);
+        }
+
+        //Parse Assignments
+        static std::pair<std::unique_ptr<RealNode>,int> parse_assignment(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
+            AssignmentNode __temp;
+            __temp.variable=parsers::parse(t_program[t_counter].second);
+            t_counter++;
+            
+            return std::make_pair(std::make_unique<RealNode>(__temp),t_counter);
+        }
+
         //Parses Function Calls
         static std::pair<std::unique_ptr<CallNode>,int> parse_callExpression(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
             CallNode __temp;
@@ -60,23 +82,16 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
             if (t_program[t_counter+1].first!=Token_c_paren)
             do {
                 t_counter++;
-                auto __parsed=parsers::parse(t_program,t_counter);
-                __temp.args.emplace_back(std::move(__parsed.first));
+                std::pair<std::unique_ptr<ASTNode>,int> __parsed=parsers::parse(t_program,t_counter);
+                std::shared_ptr<ASTNode> __arg=std::move(__parsed.first);
+                //RealNode* ast_node=dynamic_cast<RealNode*>(__arg.get());
+                __temp.args.emplace_back();
                 t_counter=__parsed.second;
             } while (t_program[t_counter].first!=Token_c_paren);
 
             t_counter++;
 
             return std::make_pair(std::make_unique<CallNode>(__temp),t_counter);
-        }
-
-        //Parse Real Numbers
-        static std::pair<std::unique_ptr<RealNode>,int> parse_real(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
-            RealNode __temp;
-            __temp.real=stold(t_program[t_counter].second);
-            t_counter++;
-            
-            return std::make_pair(std::make_unique<RealNode>(__temp),t_counter);
         }
     };
 
@@ -94,13 +109,13 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
 }
 
 //Test
-int main() {
-    //CallNode __temp;
-    // __temp.args.emplace_back(std::move(__parsed.first));
-    std::string stringed;
-    std::getline(std::cin >> std::ws, stringed);
-    std::vector tokened=parser(stringed);
-    RealNode* ast_node=dynamic_cast<RealNode*>(tokened[0].get());
-    std::cout << (*ast_node).real;
-    return 0;
-}
+// int main() {
+//     //CallNode __temp;
+//     // __temp.args.emplace_back(std::move(__parsed.first));
+//     std::string stringed;
+//     std::getline(std::cin >> std::ws, stringed);
+//     std::vector tokened=parser(stringed);
+//     RealNode* ast_node=dynamic_cast<RealNode*>(tokened[0].get());
+//     std::cout << (*ast_node).real;
+//     return 0;
+// }
