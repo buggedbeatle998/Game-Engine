@@ -1,11 +1,11 @@
 #include "parser.cpp"
+
 #include <string>
 #include <iostream>
 #include <vector>
 #include <regex>
 #include <memory>
 
-//Very unfinished
 
 //Hasher
 inline constexpr auto hash_djb2a(const std::string_view sv) {
@@ -22,7 +22,7 @@ inline constexpr auto operator"" _sh(const char *str, size_t len) {
 }
 
 //Turns to AST into cpp
-std::string _to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
+std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
     std::string _cpp;
 
     //Emitter functions
@@ -31,26 +31,45 @@ std::string _to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
         //Indentifies the Node Type
         static std::string emit(std::shared_ptr<ASTNode> ast_node_ptr) {
 
+            //Detected a Real
+            if (std::dynamic_pointer_cast<RealNode>(ast_node_ptr)!=nullptr) {
+                return emit_real(ast_node_ptr);
+            }
+
+            //Detected an Assignment
+            if (std::dynamic_pointer_cast<AssignmentNode>(ast_node_ptr)!=nullptr) {
+                return emit_assignment(ast_node_ptr);
+            }
+
             //Detected a Function Call
             if (std::dynamic_pointer_cast<CallNode>(ast_node_ptr)!=nullptr) {
                 return emit_call(ast_node_ptr);
-            }
-            
-            //Detected a Real
-            RealNode __temp;
-            __temp.real=5;
-            std::shared_ptr<ASTNode> _cheese=std::make_shared<RealNode> (__temp);
-
-            if (std::dynamic_pointer_cast<RealNode>(ast_node_ptr)!=nullptr) {
-                return emit_real(ast_node_ptr);
             }
 
             return "";
         }
 
+        //Real Node
+        static std::string emit_real(std::shared_ptr<ASTNode> ast_node_ptr) {
+            RealNode* ast_node=dynamic_cast<RealNode*>(ast_node_ptr.get());
+
+            return std::to_string((*ast_node).real);
+        }
+
+        //Assignment Node
+        static std::string emit_assignment(std::shared_ptr<ASTNode> ast_node_ptr) {
+            AssignmentNode* ast_node=dynamic_cast<AssignmentNode*>(ast_node_ptr.get());
+            std::shared_ptr __value=std::move((*ast_node).value);
+
+            std::string str_r="auto "+((*ast_node).identifier.get()->identifier)+" = "+emmiters::emit(__value)+";";
+
+            return str_r;
+        }
+
         //Function Call Node
         static std::string emit_call(std::shared_ptr<ASTNode> ast_node_ptr) {
             CallNode* ast_node=dynamic_cast<CallNode*>(ast_node_ptr.get());
+
             switch (hash_djb2a((*ast_node).identifier.get()->identifier)) {
                 case ("print"_sh):
                     return "std::cout << "+emmiters::emit(std::move((*ast_node).args[0]))+";";
@@ -60,13 +79,8 @@ std::string _to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
                     return "";
                 break;
             }
-            return "";
-        }
 
-        //Real Node
-        static std::string emit_real(std::shared_ptr<ASTNode> ast_node_ptr) {
-            RealNode* ast_node=dynamic_cast<RealNode*>(ast_node_ptr.get());
-            return std::to_string((*ast_node).real);
+            return "";
         }
     };
     
@@ -81,11 +95,11 @@ std::string _to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
 }
 
 //Test
-int main() {
-    std::string stringed;
-    std::getline(std::cin >> std::ws, stringed);
-    std::string tokened=_to_cpp(parser(stringed));
-    std::cout << tokened;
+// int main() {
+//     std::string stringed;
+//     std::getline(std::cin >> std::ws, stringed);
+//     std::string tokened=_to_cpp(parser(stringed));
+//     std::cout << tokened;
     
-    return 0;
-}
+//     return 0;
+// }

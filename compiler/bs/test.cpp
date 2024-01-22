@@ -34,6 +34,7 @@ int main() {
     // struct hhhhh {
     //     static 
     // }
+    auto x = 1;
     child2 child2_;
     child1 _temp;
     _temp.name="hhh";

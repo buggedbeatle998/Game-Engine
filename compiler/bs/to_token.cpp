@@ -1,11 +1,13 @@
 #include "token_types.cpp"
+
 #include <string>
 #include <iostream>
 #include <vector>
 #include <regex>
 #include <memory>
 
-std::vector<std::pair<int,std::string>> _to_token(std::string line) {
+//Converts a BS program to a vector of Tokens
+std::vector<std::pair<int,std::string>> to_token(std::string line) {
     //declaration
     std::vector<std::pair<int,std::string>> Token_a;
     int place=0;
@@ -43,6 +45,7 @@ std::vector<std::pair<int,std::string>> _to_token(std::string line) {
             continue;
         }
 
+        //assignments
         if (str_i=="=") {
             Token_a.push_back(std::make_pair(Token_assignment,str_i));
             continue;
@@ -64,14 +67,14 @@ std::vector<std::pair<int,std::string>> _to_token(std::string line) {
             Token_a.push_back(std::make_pair(Token_real,_real));
             continue;
         }
-
+        
         //string
         if (str_i=="\""||str_i=="\'") {
             std::string _temp=str_i;
             std::string _string="";
             str_i=line.at(place);
             while (str_i!=_temp) {
-                _string+=str_i;
+                _string+=str_i!="\"" ? str_i : "\\\"";
                 place++;
                 str_i=line.at(place);
             }

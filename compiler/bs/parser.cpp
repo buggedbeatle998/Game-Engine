@@ -1,4 +1,5 @@
 #include "to_token.cpp"
+
 #include <string>
 #include <iostream>
 #include <vector>
@@ -6,11 +7,10 @@
 #include <memory>
 #include <utility>
 
-//This is the file that I'm having problems with. The Function Call Node. Initialized in token_types.
 
 //Parses into an ATS
-std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
-    std::vector<std::pair<int,std::string>> t_program=_to_token(line+";");
+std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::string>> t_program) {
+    //Declaration
     std::vector<std::unique_ptr<ASTNode>> node_tree;
     std::pair<std::unique_ptr<ASTNode>,int> _parsed;
     std::pair<std::unique_ptr<ASTNode>,int> _parsedn;
@@ -70,7 +70,12 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
             VariableNode __iden;
             __iden.identifier=t_program[t_counter].second;
             __temp.identifier=std::make_unique<VariableNode>(__iden);
-            t_counter++;
+
+            t_counter+=2;
+
+            std::pair<std::unique_ptr<ASTNode>,int> __parsed=parsers::parse(t_program,t_counter);
+            __temp.value=std::move(__parsed.first);
+            t_counter=__parsed.second;
             
             return std::make_pair(std::make_unique<AssignmentNode>(std::move(__temp)),t_counter);
         }
