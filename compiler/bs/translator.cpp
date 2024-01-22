@@ -7,7 +7,7 @@
 #include <memory>
 #include <utility>
 
-//Generate a 
+//Generate a C++ program from a BS program
 std::string translator(std::string program) {
 
     //Convert the program to a vector of Tokens
@@ -17,7 +17,7 @@ std::string translator(std::string program) {
     std::vector<std::unique_ptr<ASTNode>> ATS_tree=parser(tokened);
 
     //Converts the AST to a C++ Program
-    std::string cpp_program=to_cpp(ATS_tree);
+    std::string cpp_program=to_cpp(std::move(ATS_tree));
 
 
     return cpp_program;

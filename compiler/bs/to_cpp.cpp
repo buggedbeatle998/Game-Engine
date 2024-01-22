@@ -98,7 +98,7 @@ std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
 // int main() {
 //     std::string stringed;
 //     std::getline(std::cin >> std::ws, stringed);
-//     std::string tokened=_to_cpp(parser(stringed));
+//     std::string tokened=to_cpp(parser(to_token(stringed)));
 //     std::cout << tokened;
     
 //     return 0;
