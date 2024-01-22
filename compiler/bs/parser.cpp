@@ -61,18 +61,18 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
             __temp.real=stold(t_program[t_counter].second);
             t_counter++;
             
-            return std::make_pair(std::make_unique<RealNode>(__temp),t_counter);
+            return std::make_pair(std::make_unique<RealNode>(std::move(__temp)),t_counter);
         }
 
         //Parse Assignments
-        static std::pair<std::unique_ptr<RealNode>,int> parse_assignment(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
+        static std::pair<std::unique_ptr<AssignmentNode>,int> parse_assignment(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
             AssignmentNode __temp;
             VariableNode __iden;
             __iden.identifier=t_program[t_counter].second;
             __temp.identifier=std::make_unique<VariableNode>(__iden);
             t_counter++;
             
-            return std::make_pair(std::make_unique<RealNode>(__temp),t_counter);
+            return std::make_pair(std::make_unique<AssignmentNode>(std::move(__temp)),t_counter);
         }
 
         //Parses Function Calls
@@ -88,8 +88,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
                 t_counter++;
                 std::pair<std::unique_ptr<ASTNode>,int> __parsed=parsers::parse(t_program,t_counter);
                 std::shared_ptr<ASTNode> __arg=std::move(__parsed.first);
-                //RealNode* ast_node=dynamic_cast<RealNode*>(__arg.get());
-                __temp.args.emplace_back();
+                __temp.args.emplace_back(__arg);
                 t_counter=__parsed.second;
             } while (t_program[t_counter].first!=Token_c_paren);
 
@@ -105,7 +104,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
         t_counter=_parsed.second;
         _parsedn=parsers::parse(t_program,t_counter);
         t_counter=(_parsedn.second<0 ? t_counter+1 : _parsedn.second);
-        node_tree.push_back(std::move((_parsedn.second==-1 ? _parsed : _parsedn).first));
+        node_tree.emplace_back(std::move((_parsedn.second==-1 ? _parsed : _parsedn).first));
         
     } while (t_counter<t_program.size());
 
@@ -113,12 +112,12 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
 }
 
 //Test
-int main() {
-    std::string stringed;
-    std::getline(std::cin >> std::ws, stringed);
-    std::vector tokened=parser(stringed);
-    // RealNode* ast_node=dynamic_cast<RealNode*>(tokened[0].get());
-    // std::cout << (*ast_node).real;
+// int main() {
+//     std::string stringed;
+//     std::getline(std::cin >> std::ws, stringed);
+//     std::vector tokened=parser(stringed);
+//     // RealNode* ast_node=dynamic_cast<RealNode*>(tokened[0].get());
+//     // std::cout << (*ast_node).real;
 
-    return 0;
-}
+//     return 0;
+// }
