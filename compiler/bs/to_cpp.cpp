@@ -51,7 +51,7 @@ std::string _to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
         //Function Call Node
         static std::string emit_call(std::shared_ptr<ASTNode> ast_node_ptr) {
             CallNode* ast_node=dynamic_cast<CallNode*>(ast_node_ptr.get());
-            switch (hash_djb2a((*ast_node).identifier)) {
+            switch (hash_djb2a((*ast_node).identifier.get()->identifier)) {
                 case ("print"_sh):
                     return "std::cout << "+emmiters::emit(std::move((*ast_node).args[0]))+";";
                 break;

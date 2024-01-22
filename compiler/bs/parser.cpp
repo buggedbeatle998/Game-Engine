@@ -67,7 +67,9 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
         //Parse Assignments
         static std::pair<std::unique_ptr<RealNode>,int> parse_assignment(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
             AssignmentNode __temp;
-            __temp.variable=parsers::parse(t_program[t_counter].second);
+            VariableNode __iden;
+            __iden.identifier=t_program[t_counter].second;
+            __temp.identifier=std::make_unique<VariableNode>(__iden);
             t_counter++;
             
             return std::make_pair(std::make_unique<RealNode>(__temp),t_counter);
@@ -76,7 +78,9 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
         //Parses Function Calls
         static std::pair<std::unique_ptr<CallNode>,int> parse_callExpression(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
             CallNode __temp;
-            __temp.identifier=t_program[t_counter].second;
+            VariableNode __iden;
+            __iden.identifier=t_program[t_counter].second;
+            __temp.identifier=std::make_unique<VariableNode>(__iden);
             t_counter++;
             
             if (t_program[t_counter+1].first!=Token_c_paren)
@@ -91,7 +95,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
 
             t_counter++;
 
-            return std::make_pair(std::make_unique<CallNode>(__temp),t_counter);
+            return std::make_pair(std::make_unique<CallNode>(std::move(__temp)),t_counter);
         }
     };
 
@@ -109,13 +113,12 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::string line) {
 }
 
 //Test
-// int main() {
-//     //CallNode __temp;
-//     // __temp.args.emplace_back(std::move(__parsed.first));
-//     std::string stringed;
-//     std::getline(std::cin >> std::ws, stringed);
-//     std::vector tokened=parser(stringed);
-//     RealNode* ast_node=dynamic_cast<RealNode*>(tokened[0].get());
-//     std::cout << (*ast_node).real;
-//     return 0;
-// }
+int main() {
+    std::string stringed;
+    std::getline(std::cin >> std::ws, stringed);
+    std::vector tokened=parser(stringed);
+    // RealNode* ast_node=dynamic_cast<RealNode*>(tokened[0].get());
+    // std::cout << (*ast_node).real;
+
+    return 0;
+}
