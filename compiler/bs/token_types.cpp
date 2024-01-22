@@ -25,42 +25,21 @@ enum Tokens {
     Token_0_tenary,
 };
 
-enum Nodes {
-    Node_real,
-    Node_binaryop,
-    Node_hash,
-    Node_variable,
-    Node_call,
-    Node_assignment,
-};
-
 //Parent class
 class ASTNode {
     public:
         virtual ~ASTNode() = default;
-        int name;
-        //virtual void placeholder() {}
-    // long double real;
-    // int operate;
-    // std::unique_ptr<ASTNode> left;
-    // std::unique_ptr<ASTNode> right;
-    // std::string identifier;
-    // std::vector<std::unique_ptr<ASTNode>> args;
-    // std::unique_ptr<VariableNode> variable;
-    // std::unique_ptr<ASTNode> value;
 };
 
 //Any real number
 class RealNode : public ASTNode {
     public:
-        int name=Node_real;
         long double real;
 };
 
 //Plus, Minus, Divide, Multiplication
 class BinaryOpNode : public ASTNode {
     public:
-        int name=Node_binaryop;
         int operate;
         std::unique_ptr<ASTNode> left;
         std::unique_ptr<ASTNode> right;
@@ -69,21 +48,18 @@ class BinaryOpNode : public ASTNode {
 //Allows Strings to turn into identifiers
 class HashNode : public ASTNode {
     public:
-        int name=Node_hash;
         std::string Token_indentifier;
 };
 
 //Variables
 class VariableNode : public ASTNode {
     public:
-        int name=Node_variable;
         std::string identifier;
 };
 
 //Calls a function "indentifier(args)"
 class CallNode : public ASTNode {
     public:
-        int name=Node_call;
         std::unique_ptr<VariableNode> identifier;
         std::vector<std::shared_ptr<ASTNode>> args;
 };
@@ -91,7 +67,6 @@ class CallNode : public ASTNode {
 //Assigns a value to a variable
 class AssignmentNode : public ASTNode {
     public:
-        int name=Node_assignment;
         std::unique_ptr<VariableNode> identifier;
         std::unique_ptr<ASTNode> value;
 };
