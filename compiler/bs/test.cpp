@@ -7,20 +7,25 @@
 //Testing file to test random things
 
 class base {
+    std::string name="food";
     public:
         virtual ~base() = default;
+
+        virtual std::string getName() {return name;};
         int cool=5;
 };
 
 class child1 : public base {
+    std::string name="cheese";
     public:
-        std::string name="cheese";
         std::vector<std::unique_ptr<base>> args;
 };
 
 class child2 : public base {
-    public:
+    protected:
         std::string name="tomato";
+
+    public:
         int what=5;
 };
 
@@ -37,10 +42,9 @@ int main() {
     auto x = 1;
     child2 child2_;
     child1 _temp;
-    _temp.name="hhh";
-    _temp.args.push_back(std::move(std::make_unique<child2>(child2_)));
+    std::unique_ptr<base> _cheesed = std::make_unique<child2>(child2_);
     
-    std::cout << "hi: " << (*(dynamic_cast<child2*>(_temp.args[0].get()))).name;
+    std::cout << "hi: " << (_cheesed.get()->getName());
 
     return 0;
 }

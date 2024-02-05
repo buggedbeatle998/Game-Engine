@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -25,21 +27,36 @@ enum Tokens {
     Token_0_tenary,
 };
 
+enum NodeType {
+    Node_ASTnode,
+    Node_real,
+    Node_binOp,
+    Node_hash,
+    Node_variable,
+    Node_call,
+    Node_assignment
+};
+
 //Parent class
 class ASTNode {
+    protected:
+        
     public:
         virtual ~ASTNode() = default;
+        NodeType m_type;
 };
 
 //Any real number
 class RealNode : public ASTNode {
     public:
+        NodeType m_type=Node_real;
         long double real;
 };
 
 //Plus, Minus, Divide, Multiplication
 class BinaryOpNode : public ASTNode {
     public:
+        NodeType m_type=Node_binOp;
         int operate;
         std::unique_ptr<ASTNode> left;
         std::unique_ptr<ASTNode> right;
@@ -48,18 +65,21 @@ class BinaryOpNode : public ASTNode {
 //Allows Strings to turn into identifiers
 class HashNode : public ASTNode {
     public:
+        NodeType m_type=Node_hash;
         std::string Token_indentifier;
 };
 
 //Variables
 class VariableNode : public ASTNode {
     public:
+        NodeType m_type=Node_variable;
         std::string identifier;
 };
 
 //Calls a function "indentifier(args)"
 class CallNode : public ASTNode {
     public:
+        NodeType m_type=Node_call;
         std::unique_ptr<VariableNode> identifier;
         std::vector<std::shared_ptr<ASTNode>> args;
 };
@@ -67,37 +87,7 @@ class CallNode : public ASTNode {
 //Assigns a value to a variable
 class AssignmentNode : public ASTNode {
     public:
+        NodeType m_type=Node_assignment;
         std::unique_ptr<VariableNode> identifier;
         std::unique_ptr<ASTNode> value;
 };
-
-
-
-
-
-
-
-
-//template<typename name=std::string,std::string value > using 
-// typedef struct{std::string name} Token_string;
-// struct Token_assignment {std::string name="Token_assignment";std::string value;};
-// struct Token_real {std::string name="Token_real";std::string value;};
-// struct Token_string {std::string name="Token_assignment";std::string value;};
-// struct Token_addition {std::string name="";value="";};
-// struct Token_subtraction {std::string name="";value="";};
-// struct Token_multiplication {std::string name="";value="";};
-// struct Token_division {std::string name="";value="";};
-// struct Token_o_paren {std::string name="";value="";};
-// struct Token_c_paren {std::string name="";value="";};
-// struct Token_s_o_paren {std::string name="";value="";};
-// struct Token_s_c_paren {std::string name="";value="";};
-// struct Token_c_o_paren {std::string name="";value="";};
-// struct Token_c_c_paren {std::string name="";value="";};
-
-//std::variant<>;
-
-// int main() {
-//     std::cout << Token_string;
-
-//     return 0;
-// }

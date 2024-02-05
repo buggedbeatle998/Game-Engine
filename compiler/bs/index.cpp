@@ -1,37 +1,59 @@
+//#include "translator.hpp"
 #include "translator.cpp"
 
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <memory>
+#include <filesystem>
+
+using namespace std;
 
 
-int main() {
+int main(int argc,char* argv[]) {
     while (true) {
-        std::string inputted;
-        std::getline(std::cin >> std::ws, inputted);
-        std::string command=inputted.substr(0, inputted.find(" "));
+        //
+        string inputted;
+        getline(cin >> ws, inputted);
+        string command=inputted.substr(0, inputted.find(" "));
+        string cd=string(argv[0]);
+        
+        cd=cd.substr(0,cd.find_last_of('\\')+1);
 
 
         if (command=="exit") break;
 
-        std::string filed=inputted.substr(inputted.find(" ")+1,inputted.size());
+        string filed=inputted.substr(inputted.find(" ")+1,inputted.size());
 
         if (command=="comp") {
-            std::ifstream BS_file(filed);
+            ifstream BS_file(cd+filed);
 
             if (BS_file.is_open()) {
-                std::stringstream buffer;
+                stringstream buffer;
                 buffer << BS_file.rdbuf();
-                std::cout << translator(buffer.str());
+                cout << translator(buffer.str()) << "\n";
 
             } else {
-                std::cout << "This file does not exist!";
+                cout << "This file does not exist!" << "\n";
             }
 
             continue;
         }
-        
+
+        if (command=="cd") {
+            cout << cd << "\n";
+            continue;
+        }
+
+        if (command=="input") {
+            cout << "Input some code:" << "\n";
+            string coded;
+            getline(cin >> ws, coded);
+
+            cout << translator(coded) << "\n";
+            
+            continue;
+        }
     }
 
     return 0;

@@ -1,4 +1,4 @@
-#include "token_types.cpp"
+#include "token_types.hpp"
 
 #include <string>
 #include <iostream>
@@ -107,8 +107,9 @@ std::vector<std::pair<int,std::string>> to_token(std::string line) {
             continue;
         }
 
+        //Comma
         if (str_i==",") {
-            Token_a.push_back(std::make_pair(Token_addition,str_i));
+            Token_a.push_back(std::make_pair(Token_coma,str_i));
             continue;
         }
 
