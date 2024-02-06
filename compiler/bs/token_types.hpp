@@ -39,17 +39,19 @@ enum NodeType {
 
 //Parent class
 class ASTNode {
-    protected:
-        
     public:
+
         virtual ~ASTNode() = default;
         NodeType m_type;
+
+        virtual int getName() {return m_type;};
 };
 
 //Any real number
 class RealNode : public ASTNode {
     public:
         NodeType m_type=Node_real;
+        virtual int getName() {return m_type;};
         long double real;
 };
 
@@ -57,7 +59,8 @@ class RealNode : public ASTNode {
 class BinaryOpNode : public ASTNode {
     public:
         NodeType m_type=Node_binOp;
-        int operate;
+        virtual int getName() {return m_type;};
+        Tokens operate;
         std::unique_ptr<ASTNode> left;
         std::unique_ptr<ASTNode> right;
 };
@@ -66,6 +69,7 @@ class BinaryOpNode : public ASTNode {
 class HashNode : public ASTNode {
     public:
         NodeType m_type=Node_hash;
+        virtual int getName() {return m_type;};
         std::string Token_indentifier;
 };
 
@@ -73,6 +77,7 @@ class HashNode : public ASTNode {
 class VariableNode : public ASTNode {
     public:
         NodeType m_type=Node_variable;
+        virtual int getName() {return m_type;};
         std::string identifier;
 };
 
@@ -80,6 +85,7 @@ class VariableNode : public ASTNode {
 class CallNode : public ASTNode {
     public:
         NodeType m_type=Node_call;
+        virtual int getName() {return m_type;};
         std::unique_ptr<VariableNode> identifier;
         std::vector<std::shared_ptr<ASTNode>> args;
 };
@@ -88,6 +94,7 @@ class CallNode : public ASTNode {
 class AssignmentNode : public ASTNode {
     public:
         NodeType m_type=Node_assignment;
+        virtual int getName() {return m_type;};
         std::unique_ptr<VariableNode> identifier;
         std::unique_ptr<ASTNode> value;
 };

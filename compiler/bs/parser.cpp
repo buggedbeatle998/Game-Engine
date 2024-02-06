@@ -66,7 +66,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
                     t_counter++;
                     return std::make_pair(nullptr,t_counter);
                 break;
-
+                
                 case Token_indentifier:
                     if (t_program[t_counter+1].first==Token_o_paren) {
                         returner=parse_callExpression(t_program,t_counter);
@@ -184,7 +184,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
         //Parses Binary Operations
         static std::pair<std::unique_ptr<BinaryOpNode>,int> parse_binOps(std::vector<std::pair<int,std::string>> t_program,int t_counter,std::unique_ptr<ASTNode> _left) {
             BinaryOpNode __temp;
-            __temp.operate=t_program[t_counter].first;
+            __temp.operate=Tokens(t_program[t_counter].first);
             __temp.left=std::move(_left);
             t_counter++;
             

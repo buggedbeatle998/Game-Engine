@@ -2,7 +2,6 @@
 #include "translator.cpp"
 
 #include <fstream>
-#include <iostream>
 #include <string>
 #include <memory>
 #include <filesystem>
@@ -31,26 +30,26 @@ int main(int argc,char* argv[]) {
             if (BS_file.is_open()) {
                 stringstream buffer;
                 buffer << BS_file.rdbuf();
-                cout << translator(buffer.str()) << "\n";
+                printf("%s\n",translator(buffer.str()).c_str());
 
             } else {
-                cout << "This file does not exist!" << "\n";
+                printf("This file does not exist!\n");
             }
 
             continue;
         }
 
         if (command=="cd") {
-            cout << cd << "\n";
+            printf("%s\n",cd.c_str());
             continue;
         }
 
         if (command=="input") {
-            cout << "Input some code:" << "\n";
+            printf("Input some code:\n");
             string coded;
             getline(cin >> ws, coded);
 
-            cout << translator(coded) << "\n";
+            printf("%s\n",translator(coded).c_str());
             
             continue;
         }

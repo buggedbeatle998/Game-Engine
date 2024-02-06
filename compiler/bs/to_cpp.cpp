@@ -52,7 +52,7 @@ std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
             // }
 
             //Detected a Real
-            switch (dynamic_cast<ASTNode*>(ast_node_ptr.get())->m_type) {
+            switch (dynamic_cast<ASTNode*>(ast_node_ptr.get())->getName()) {
                 case Node_real:
                     return emit_real(ast_node_ptr);
                 break;
