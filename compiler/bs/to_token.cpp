@@ -45,8 +45,12 @@ std::vector<std::pair<int,std::string>> to_token(std::string line) {
             continue;
         }
 
-        //assignments
+        //assignments and comparitive equals
         if (str_i=="=") {
+            if (line.at(place)=='=') {
+                Token_a.push_back(std::make_pair(Token_comp_equals,str_i));
+                continue;
+            }
             Token_a.push_back(std::make_pair(Token_assignment,str_i));
             continue;
         }
@@ -149,18 +153,55 @@ std::vector<std::pair<int,std::string>> to_token(std::string line) {
             continue;
         }
 
+        //hash
         if (str_i=="`") {
             Token_a.push_back(std::make_pair(Token_hasher,str_i));
             continue;
         }
 
+        //tenary
         if (str_i=="?") {
             Token_a.push_back(std::make_pair(Token_1_tenary,str_i));
             continue;
         }
 
+        //tenary and walrus
         if (str_i==":") {
+            if (line.at(place)=='=') {
+                Token_a.push_back(std::make_pair(Token_walrus,str_i));
+                continue;
+            }
             Token_a.push_back(std::make_pair(Token_0_tenary,str_i));
+            continue;
+        }
+
+        //not
+        if (str_i=="!") {
+            if (line.at(place)=='=') {
+                Token_a.push_back(std::make_pair(Token_not_equals,str_i));
+                continue;
+            }
+            Token_a.push_back(std::make_pair(Token_not,str_i));
+            continue;
+        }
+
+        //greater and/or equals
+        if (str_i==">") {
+            if (line.at(place)=='=') {
+                Token_a.push_back(std::make_pair(Token_greater_equals,str_i));
+                continue;
+            }
+            Token_a.push_back(std::make_pair(Token_greater,str_i));
+            continue;
+        }
+        
+        //greater and/or equals
+        if (str_i=="<") {
+            if (line.at(place)=='=') {
+                Token_a.push_back(std::make_pair(Token_less_equals,str_i));
+                continue;
+            }
+            Token_a.push_back(std::make_pair(Token_less,str_i));
             continue;
         }
 

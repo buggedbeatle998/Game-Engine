@@ -121,29 +121,31 @@ std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
         static std::string emit_binOp(std::shared_ptr<ASTNode> ast_node_ptr) {
             BinaryOpNode* ast_node=dynamic_cast<BinaryOpNode*>(ast_node_ptr.get());
 
+            std::string r_str="("+emmiters::emit(std::move(ast_node->left));
             switch (ast_node->operate) {
                 case (Token_addition):
-                    return emmiters::emit(std::move(ast_node->left))+" + "+emmiters::emit(std::move(ast_node->right));
+                    r_str+=" + ";
                 break;
 
                 case (Token_subtraction):
-                    return emmiters::emit(std::move(ast_node->left))+" - "+emmiters::emit(std::move(ast_node->right));
+                    r_str+=" - ";
                 break;
 
                 case (Token_multiplication):
-                    return emmiters::emit(std::move(ast_node->left))+" * "+emmiters::emit(std::move(ast_node->right));
+                    r_str+=" * ";
                 break;
 
                 case (Token_division):
-                    return emmiters::emit(std::move(ast_node->left))+" / "+emmiters::emit(std::move(ast_node->right));
+                    r_str+=" / ";
                 break;
 
                 default:
-                    return "";
+                    throw std::invalid_argument("Undefined Operator");
                 break;
             }
+            r_str+=emmiters::emit(std::move(ast_node->right))+")";
 
-            return "";
+            return r_str;
         }
     };
     

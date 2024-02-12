@@ -25,6 +25,17 @@ enum Tokens {
     Token_hasher,
     Token_1_tenary,
     Token_0_tenary,
+    Token_walrus,
+    Token_comp_equals,
+    Token_greater,
+    Token_greater_equals,
+    Token_less,
+    Token_less_equals,
+    Token_not_equals,
+    Token_and,
+    Token_or,
+    Token_not,
+    Token_xor,
 };
 
 enum NodeType {
@@ -34,7 +45,7 @@ enum NodeType {
     Node_hash,
     Node_variable,
     Node_call,
-    Node_assignment
+    Node_assignment,
 };
 
 //Parent class
@@ -52,7 +63,7 @@ class RealNode : public ASTNode {
     public:
         NodeType m_type=Node_real;
         virtual int getName() {return m_type;};
-        long double real;
+        unsigned long double real;
 };
 
 //Plus, Minus, Divide, Multiplication

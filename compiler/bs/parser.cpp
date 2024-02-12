@@ -37,22 +37,6 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
                     throw std::invalid_argument("I really don't think it's possible to get this error message. If you're getting this you're doing somethhing seriously wrong with this: "+t_program[t_counter].second);
                 break;
             };
-            // t_counter=returner.second;
-
-
-            // //Checking for Binary Operatiobns
-            // std::pair<std::unique_ptr<ASTNode>,int> _parsedn=move(parsers::parse(t_program,t_counter));
-            // t_counter=_parsedn.second;
-            
-            // if (_parsedn.first!=nullptr) {
-            //     std::shared_ptr<ASTNode> _temp0=move(_parsedn.first);
-            //     if (std::dynamic_pointer_cast<BinaryOpNode>(_temp0)==nullptr) std::invalid_argument("Expected Binary Expression");
-            //     BinaryOpNode* _temp1=dynamic_cast<BinaryOpNode*>(_temp0.get());
-            //     _temp1->left=std::move(returner.first);
-            //     std::pair<std::unique_ptr<BinaryOpNode>,int> returner=std::make_pair(std::make_unique<BinaryOpNode>(std::move(*_temp1)),t_counter);
-            // }
-            
-            // returner.second=t_counter;
 
             return std::move(returner);
         }
@@ -66,7 +50,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
                     t_counter++;
                     return std::make_pair(nullptr,t_counter);
                 break;
-                
+
                 case Token_indentifier:
                     if (t_program[t_counter+1].first==Token_o_paren) {
                         returner=parse_callExpression(t_program,t_counter);
@@ -83,6 +67,12 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
                 case Token_division:
                     returner=parsers::parse_binOps(t_program,t_counter,std::move(t_node));
                     t_counter=returner.second;
+                break;
+                
+                case Token_o_paren:
+                    t_counter++;
+                    returner=parsers::parse_right(t_program,t_counter);
+                    returner.second++;
                 break;
 
                 default:
