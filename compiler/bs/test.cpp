@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <any>
 
 
 //Testing file to test random things
@@ -46,6 +47,13 @@ int main() {
     std::unique_ptr<base> _cheesed = std::make_unique<child2>(child2_);
     
     std::cout << "hi: " << (_cheesed.get()->getName());
+
+    
+    std::vector<std::any> cheese={1,"hi",true};
+
+    for (int i=0;i++;i<3) {
+        std::cout << "hi";//cheese[i];
+    }
 
     return 0;
 }

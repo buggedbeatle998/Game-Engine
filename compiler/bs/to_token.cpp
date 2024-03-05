@@ -93,8 +93,13 @@ std::vector<std::pair<int,std::string>> to_token(std::string line) {
             continue;
         }
 
-        //subtraction
+        //subtraction and type identifier
         if (str_i=="-") {
+            if (line.at(place)=='>') {
+                Token_a.push_back(std::make_pair(Token_typeIdentifier,str_i+line.at(place)));
+                place++;
+                continue;
+            }
             Token_a.push_back(std::make_pair(Token_subtraction,str_i));
             continue;
         }
@@ -168,7 +173,8 @@ std::vector<std::pair<int,std::string>> to_token(std::string line) {
         //tenary and walrus
         if (str_i==":") {
             if (line.at(place)=='=') {
-                Token_a.push_back(std::make_pair(Token_walrus,str_i));
+                Token_a.push_back(std::make_pair(Token_walrus,str_i+line.at(place)));
+                place++;
                 continue;
             }
             Token_a.push_back(std::make_pair(Token_0_tenary,str_i));
@@ -178,7 +184,8 @@ std::vector<std::pair<int,std::string>> to_token(std::string line) {
         //not
         if (str_i=="!") {
             if (line.at(place)=='=') {
-                Token_a.push_back(std::make_pair(Token_not_equals,str_i));
+                Token_a.push_back(std::make_pair(Token_not_equals,str_i+line.at(place)));
+                place++;
                 continue;
             }
             Token_a.push_back(std::make_pair(Token_not,str_i));
@@ -188,7 +195,8 @@ std::vector<std::pair<int,std::string>> to_token(std::string line) {
         //greater and/or equals
         if (str_i==">") {
             if (line.at(place)=='=') {
-                Token_a.push_back(std::make_pair(Token_greater_equals,str_i));
+                Token_a.push_back(std::make_pair(Token_greater_equals,str_i+line.at(place)));
+                place++;
                 continue;
             }
             Token_a.push_back(std::make_pair(Token_greater,str_i));
@@ -198,7 +206,8 @@ std::vector<std::pair<int,std::string>> to_token(std::string line) {
         //greater and/or equals
         if (str_i=="<") {
             if (line.at(place)=='=') {
-                Token_a.push_back(std::make_pair(Token_less_equals,str_i));
+                Token_a.push_back(std::make_pair(Token_less_equals,str_i+line.at(place)));
+                place++;
                 continue;
             }
             Token_a.push_back(std::make_pair(Token_less,str_i));

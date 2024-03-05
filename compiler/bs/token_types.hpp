@@ -36,6 +36,26 @@ enum Tokens {
     Token_or,
     Token_not,
     Token_xor,
+    Token_typeIdentifier,
+};
+
+enum Types {
+    Type_undefined,
+    Type_noone,
+    Type_auto,
+    Type_boolean,
+    Type_real,
+    Type_string,
+    Type_array,
+    Type_tuple,
+    Type_pair,
+    Type_function,
+    Type_file,
+    Type_pointer,
+};
+
+std::vector<std::string> keyWords={
+    "func"
 };
 
 enum NodeType {
@@ -46,6 +66,7 @@ enum NodeType {
     Node_variable,
     Node_call,
     Node_assignment,
+    Node_func,
 };
 
 //Parent class
@@ -63,7 +84,7 @@ class RealNode : public ASTNode {
     public:
         NodeType m_type=Node_real;
         virtual int getName() {return m_type;};
-        unsigned long double real;
+        long double real;
 };
 
 //Plus, Minus, Divide, Multiplication
@@ -108,4 +129,15 @@ class AssignmentNode : public ASTNode {
         virtual int getName() {return m_type;};
         std::unique_ptr<VariableNode> identifier;
         std::unique_ptr<ASTNode> value;
+        Types type=Type_auto;
+};
+
+//Creates a function
+class FuncNode : public ASTNode {
+    public:
+        NodeType m_type=Node_func;
+        virtual int getName() {return m_type;};
+        std::unique_ptr<VariableNode> identifier;
+        Types type=Type_auto;
+        std::vector<std::tuple<std::string,Types,std::unique_ptr<ASTNode>>> params;
 };

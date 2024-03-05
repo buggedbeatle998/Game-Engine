@@ -7,19 +7,64 @@
 #include <memory>
 
 
-//Hasher
-inline constexpr auto hash_djb2a(const std::string_view sv) {
-    unsigned long hash{ 5381 };
-    for (unsigned char c : sv) {
-        hash = ((hash << 5) + hash) ^ c;
+std::string get_cpptype(Types token_str) {
+    std::string returner;
+    switch (token_str) {
+        case Type_undefined:
+            returner="void";
+        break;
+
+        case Type_noone:
+            returner="bool";
+        break;
+
+        case Type_auto:
+            returner="auto";
+        break;
+
+        case Type_boolean:
+            returner="bool";
+        break;
+
+        case Type_real:
+            returner="long double";
+        break;
+
+        case Type_string:
+            returner="std::string";
+        break;
+
+        case "array"_sh:
+            returner="std::vector<std::any>";
+        break;
+
+        case "tuple"_sh:
+            returner="std::tuple<std::any>";
+        break;
+
+        case "pair"_sh:
+            returner="std::pair<std::any,std::any>";
+        break;
+
+        case "scr"_sh:
+            returner="std::function";
+        break;
+
+        case "file"_sh:
+            returner="ifstream";
+        break;
+
+        case "ptr"_sh:
+            returner="std::any*";
+        break;
+
+        default:
+            throw std::invalid_argument("Invalid datatype: "+token_str);
+        break;
     }
-    return hash;
+    return returner;
 }
- 
-//Turns it into a method
-inline constexpr auto operator"" _sh(const char *str, size_t len) {
-    return hash_djb2a(std::string_view{ str, len });
-}
+
 
 //Turns to AST into cpp
 std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
@@ -51,8 +96,8 @@ std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
             //     return emit_binOp(ast_node_ptr);
             // }
 
-            //Detected a Real
             switch (dynamic_cast<ASTNode*>(ast_node_ptr.get())->getName()) {
+                //Detected a Real
                 case Node_real:
                     return emit_real(ast_node_ptr);
                 break;
@@ -91,7 +136,7 @@ std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
             AssignmentNode* ast_node=dynamic_cast<AssignmentNode*>(ast_node_ptr.get());
             std::shared_ptr __value=std::move((*ast_node).value);
 
-            std::string str_r="auto "+((*ast_node).identifier.get()->identifier)+" = "+emmiters::emit(__value);
+            std::string str_r=get_cpptype(ast_node->type)+" "+((*ast_node).identifier.get()->identifier)+" = "+emmiters::emit(__value);
 
             return str_r;
         }
