@@ -55,7 +55,20 @@ enum Types {
 };
 
 std::vector<std::string> keyWords={
-    "func"
+    "if",
+    "else",
+    "func",
+    "return",
+    "del",
+    "for",
+    "while",
+    "do",
+    "continue",
+    "break",
+    "exit",
+    "assert",
+    "in",
+    "is",
 };
 
 enum NodeType {

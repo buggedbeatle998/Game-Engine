@@ -60,6 +60,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
             return std::move(returner);
         }
 
+        //Parse a right expression
         static std::pair<std::unique_ptr<ASTNode>,int> parse_right(std::vector<std::pair<int,std::string>> t_program,int t_counter,std::unique_ptr<ASTNode> t_node=nullptr) {
             std::pair<std::unique_ptr<ASTNode>,int> returner;
             switch (t_program[t_counter].first) {
@@ -116,6 +117,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
             return std::move(returner);
         }
 
+        //Parse a right expression in a BinOp
         static std::pair<std::unique_ptr<ASTNode>,int> parse_right_inBinOP(const std::vector<std::pair<int,std::string>>& t_program,int t_counter,std::unique_ptr<ASTNode> t_node=nullptr) {
             std::pair<std::unique_ptr<ASTNode>,int> returner;
             switch (t_program[t_counter].first) {
@@ -156,13 +158,14 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
             };
             t_counter=returner.second;
 
-            if (parsers::check_binOp(t_program[t_counter].first==2)) {
+            if (parsers::check_binOp(t_program[t_counter].first)==2) {
                 returner=parse_multBinOps(t_program,t_counter,std::move(returner.first));
             }
 
             return std::move(returner);
         }
 
+        //Parse a right expression in a MultBinOp
         static std::pair<std::unique_ptr<ASTNode>,int> parse_right_inMultBinOP(std::vector<std::pair<int,std::string>> t_program,int t_counter,std::unique_ptr<ASTNode> t_node=nullptr) {
             std::pair<std::unique_ptr<ASTNode>,int> returner;
             switch (t_program[t_counter].first) {
@@ -205,6 +208,11 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
             return std::move(returner);
         }
 
+        //Parse a Keyword
+        // static std::pair<std::unique_ptr<ASTNode>,int> parse_keywords(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
+        // }
+
+        //Check the Symbol
         static int check_binOp(int _token) {
             switch (_token) {
                 case Token_multiplication:
@@ -232,6 +240,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
             return std::make_pair(std::make_unique<RealNode>(std::move(__temp)),t_counter);
         }
 
+        //Data Types
         static Types get_type(std::string token_str) {
             Types returner;
             switch (hash_djb2a(token_str)) {
@@ -341,26 +350,15 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
             __temp.operate=Tokens(t_program[t_counter].first);
             __temp.left=std::move(_left);
 
-            t_counter+=2;
+            t_counter++;
 
             std::pair<std::unique_ptr<ASTNode>,int> r_parsed=parsers::parse_right_inBinOP(t_program,t_counter);
             t_counter=r_parsed.second;
             __temp.right=std::move(r_parsed.first);
-            
-            // std::pair<std::unique_ptr<ASTNode>,int> _right=parsers::parse_right(t_program,t_counter);
-            // t_counter=_right.second;
-
-            // if (check_binOp(t_program[t_counter].first)>1) {
-            //     std::pair<std::unique_ptr<BinaryOpNode>,int> _p_right=parse_binOps(t_program,t_counter,std::move(_right.first));
-            //     __temp.right=std::move(_p_right.first);
-            //     t_counter=_p_right.second;
-            // } else {
-            //     __temp.right=std::move(_right.first);
-            // }
 
             std::pair<std::unique_ptr<BinaryOpNode>,int> __returner;
 
-            if (check_binOp(t_program[t_counter].first==1)) {
+            if (parsers::check_binOp(t_program[t_counter].first)>=1) {
                 __returner=parsers::parse_binOps(t_program,t_counter,std::move(std::make_unique<BinaryOpNode>(std::move(__temp))));
             
             } else __returner=std::make_pair(std::make_unique<BinaryOpNode>(std::move(__temp)),t_counter);
@@ -374,26 +372,15 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
             __temp.operate=Tokens(t_program[t_counter].first);
             __temp.left=std::move(_left);
 
-            t_counter+=2;
+            t_counter++;
 
             std::pair<std::unique_ptr<ASTNode>,int> r_parsed=parsers::parse_right_inMultBinOP(t_program,t_counter);
             t_counter=r_parsed.second;
             __temp.right=std::move(r_parsed.first);
-            
-            // std::pair<std::unique_ptr<ASTNode>,int> _right=parsers::parse_right(t_program,t_counter);
-            // t_counter=_right.second;
-
-            // if (check_binOp(t_program[t_counter].first)>1) {
-            //     std::pair<std::unique_ptr<BinaryOpNode>,int> _p_right=parse_binOps(t_program,t_counter,std::move(_right.first));
-            //     __temp.right=std::move(_p_right.first);
-            //     t_counter=_p_right.second;
-            // } else {
-            //     __temp.right=std::move(_right.first);
-            // }
 
             std::pair<std::unique_ptr<BinaryOpNode>,int> __returner;
 
-            if (check_binOp(t_program[t_counter].first==2)) {
+            if (check_binOp(t_program[t_counter].first)>=2) {
                 __returner=parsers::parse_multBinOps(t_program,t_counter,std::move(std::make_unique<BinaryOpNode>(std::move(__temp))));
             
             } else __returner=std::make_pair(std::make_unique<BinaryOpNode>(std::move(__temp)),t_counter);

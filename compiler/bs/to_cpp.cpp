@@ -147,11 +147,15 @@ std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
 
             switch (hash_djb2a(ast_node->identifier.get()->identifier)) {
                 case ("print"_sh):
-                    return "std::cout << "+emmiters::emit(std::move(ast_node->args[0]));
+                    return "printf("+emmiters::emit(std::move(ast_node->args[0]))+")";
                 break;
 
                 case ("div"_sh):
                     return "div("+emmiters::emit(std::move(ast_node->args[0]))+","+emmiters::emit(std::move(ast_node->args[1]))+")";
+                break;
+
+                case ("pow"_sh):
+                    return "pow("+emmiters::emit(std::move(ast_node->args[0]))+","+emmiters::emit(std::move(ast_node->args[1]))+")";
                 break;
 
                 default:
