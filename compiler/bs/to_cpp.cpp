@@ -96,7 +96,7 @@ string to_cpp(AST_vector ast_tree) {
                     return emit_binOp(ast_node_ptr);
                 break;
 
-                //Detected a Binary Operations
+                //Detected a If Statement
                 case Node_if:
                     return emit_if(ast_node_ptr);
                 break;
@@ -180,7 +180,7 @@ string to_cpp(AST_vector ast_tree) {
             return r_str;
         }
 
-        //Binary Operator Node
+        //If Node
         static string emit_if(shared_ptr<ASTNode> ast_node_ptr) {
             IfNode* ast_node=dynamic_cast<IfNode*>(ast_node_ptr.get());
             string r_str="if (" + emmiters::emit(move(ast_node->expression)) + ") {";
