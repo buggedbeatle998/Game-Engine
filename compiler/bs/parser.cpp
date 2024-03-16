@@ -27,16 +27,16 @@ inline constexpr auto operator"" _sh(const char *str, size_t len) {
 std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::string>> t_program) {
     //Declaration
     std::vector<std::unique_ptr<ASTNode>> node_tree;
-    std::pair<std::unique_ptr<ASTNode>,int> _parsed;
-    std::pair<std::unique_ptr<ASTNode>,int> _parsedn;
+    Node_package _parsed;
+    Node_package _parsedn;
     int t_counter=0;
     
     //Parser functions
     struct parsers {
 
         //Function that dectects which node to parse
-        static std::pair<std::unique_ptr<ASTNode>,int> parse_left(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
-            std::pair<std::unique_ptr<ASTNode>,int> returner;
+        static Node_package parse_left(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
+            Node_package returner;
             switch (t_program[t_counter].first) {
                 case Token_indentifier:
                     if (std::find(keyWords.begin(),keyWords.end(),t_program[t_counter].second)!=keyWords.end()) {
@@ -61,8 +61,8 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
         }
 
         //Parse a right expression
-        static std::pair<std::unique_ptr<ASTNode>,int> parse_right(std::vector<std::pair<int,std::string>> t_program,int t_counter,std::unique_ptr<ASTNode> t_node=nullptr) {
-            std::pair<std::unique_ptr<ASTNode>,int> returner;
+        static Node_package parse_right(std::vector<std::pair<int,std::string>> t_program,int t_counter,std::unique_ptr<ASTNode> t_node=nullptr) {
+            Node_package returner;
             switch (t_program[t_counter].first) {
                 case Token_newline:
                 case Token_c_paren:
@@ -118,8 +118,8 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
         }
 
         //Parse a right expression in a BinOp
-        static std::pair<std::unique_ptr<ASTNode>,int> parse_right_inBinOP(const std::vector<std::pair<int,std::string>>& t_program,int t_counter,std::unique_ptr<ASTNode> t_node=nullptr) {
-            std::pair<std::unique_ptr<ASTNode>,int> returner;
+        static Node_package parse_right_inBinOP(const std::vector<std::pair<int,std::string>>& t_program,int t_counter,std::unique_ptr<ASTNode> t_node=nullptr) {
+            Node_package returner;
             switch (t_program[t_counter].first) {
                 case Token_newline:
                 case Token_c_paren:
@@ -166,8 +166,8 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
         }
 
         //Parse a right expression in a MultBinOp
-        static std::pair<std::unique_ptr<ASTNode>,int> parse_right_inMultBinOP(std::vector<std::pair<int,std::string>> t_program,int t_counter,std::unique_ptr<ASTNode> t_node=nullptr) {
-            std::pair<std::unique_ptr<ASTNode>,int> returner;
+        static Node_package parse_right_inMultBinOP(std::vector<std::pair<int,std::string>> t_program,int t_counter,std::unique_ptr<ASTNode> t_node=nullptr) {
+            Node_package returner;
             switch (t_program[t_counter].first) {
                 case Token_newline:
                 case Token_c_paren:
@@ -209,8 +209,13 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
         }
 
         //Parse a Keyword
-        // static std::pair<std::unique_ptr<ASTNode>,int> parse_keywords(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
-        // }
+        static Node_package parse_keywords(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
+            switch (hash_djb2a(t_program[t_counter].second)) {
+                case "if"_sh:
+                    
+                break;
+            }
+        }
 
         //Check the Symbol
         static int check_binOp(int _token) {
@@ -315,7 +320,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
 
             t_counter++;
 
-            std::pair<std::unique_ptr<ASTNode>,int> __parsed=parsers::parse_right(t_program,t_counter);
+            Node_package __parsed=parsers::parse_right(t_program,t_counter);
             __temp.value=std::move(__parsed.first);
             t_counter=__parsed.second;
             
@@ -333,7 +338,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
             if (t_program[t_counter+1].first!=Token_c_paren)
             do {
                 t_counter++;
-                std::pair<std::unique_ptr<ASTNode>,int> __parsed=parsers::parse_right(t_program,t_counter);
+                Node_package __parsed=parsers::parse_right(t_program,t_counter);
                 std::shared_ptr<ASTNode> __arg=std::move(__parsed.first);
                 __temp.args.emplace_back(__arg);
                 t_counter=__parsed.second;
@@ -352,7 +357,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
 
             t_counter++;
 
-            std::pair<std::unique_ptr<ASTNode>,int> r_parsed=parsers::parse_right_inBinOP(t_program,t_counter);
+            Node_package r_parsed=parsers::parse_right_inBinOP(t_program,t_counter);
             t_counter=r_parsed.second;
             __temp.right=std::move(r_parsed.first);
 
@@ -374,7 +379,7 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
 
             t_counter++;
 
-            std::pair<std::unique_ptr<ASTNode>,int> r_parsed=parsers::parse_right_inMultBinOP(t_program,t_counter);
+            Node_package r_parsed=parsers::parse_right_inMultBinOP(t_program,t_counter);
             t_counter=r_parsed.second;
             __temp.right=std::move(r_parsed.first);
 
@@ -386,6 +391,24 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
             } else __returner=std::make_pair(std::make_unique<BinaryOpNode>(std::move(__temp)),t_counter);
 
             return __returner;
+        }
+
+        static std::pair<std::unique_ptr<RealNode>,int> parse_if(std::vector<std::pair<int,std::string>> t_program,int t_counter) {
+            IfNode __temp;
+
+            t_counter++;
+
+            Node_package con_parsed=parsers::parse_right(t_program, t_counter);
+            __temp.expression=std::move(con_parsed.first);
+
+            if (t_program[t_counter].first==Token_newline) t_counter++;
+
+            if (t_program[t_counter++].first==Token_c_o_paren) {
+                while (t_program[t_counter]==Token_c_c_paren)
+                {
+                    
+                }
+            }
         }
     };
 
@@ -406,6 +429,5 @@ std::vector<std::unique_ptr<ASTNode>> parser(std::vector<std::pair<int,std::stri
 //     std::vector tokened=parser(stringed);
 //     // RealNode* ast_node=dynamic_cast<RealNode*>(tokened[0].get());
 //     // std::cout << (*ast_node).real;
-
 //     return 0;
 // }

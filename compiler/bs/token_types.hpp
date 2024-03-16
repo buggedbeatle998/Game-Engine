@@ -79,6 +79,7 @@ enum NodeType {
     Node_variable,
     Node_call,
     Node_assignment,
+    Node_if,
     Node_func,
 };
 
@@ -154,3 +155,15 @@ class FuncNode : public ASTNode {
         Types type=Type_auto;
         std::vector<std::tuple<std::string,Types,std::unique_ptr<ASTNode>>> params;
 };
+
+//If statement
+class IfNode : public ASTNode {
+    public:
+        NodeType m_type=Node_if;
+        virtual int getName() {return m_type;};
+        std::unique_ptr<ASTNode> expression;
+        std::vector<std::shared_ptr<ASTNode>> program;
+};
+
+
+typedef std::pair<std::unique_ptr<ASTNode>,int> Node_package;
