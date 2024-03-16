@@ -5,13 +5,13 @@
 #include <string>
 #include <memory>
 #include <filesystem>
+#include <algorithm>
 
 using namespace std;
 
 
 int main(int argc,char* argv[]) {
     while (true) {
-        //
         string inputted;
         getline(cin >> ws, inputted);
         string command=inputted.substr(0, inputted.find(" "));
@@ -25,17 +25,21 @@ int main(int argc,char* argv[]) {
         string filed=inputted.substr(inputted.find(" ")+1,inputted.size());
 
         if (command=="comp") {
-            ifstream BS_file(cd+filed);
+            if (filed.find(".")!=filed.size() && filed.substr(filed.find("."), filed.size())=="bs") {
+                ifstream BS_file(cd+filed);
 
-            if (BS_file.is_open()) {
-                stringstream buffer;
-                buffer << BS_file.rdbuf();
-                printf("%s\n",translator(buffer.str()).c_str());
+                if (BS_file.is_open()) {
+                    stringstream buffer;
+                    buffer << BS_file.rdbuf();
+                    printf("%s\n",translator(buffer.str()).c_str());
 
+                } else {
+                    printf("This file does not exist!\n");
+                }
             } else {
-                printf("This file does not exist!\n");
+                printf("file \"%s\" has the wrong extension! (must be \".bs\")\n", filed.c_str());
             }
-
+            
             continue;
         }
 

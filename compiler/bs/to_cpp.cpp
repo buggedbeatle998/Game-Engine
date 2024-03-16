@@ -7,8 +7,8 @@
 #include <memory>
 
 
-std::string get_cpptype(Types token_str) {
-    std::string returner;
+string get_cpptype(Types token_str) {
+    string returner;
     switch (token_str) {
         case Type_undefined:
             returner="void";
@@ -31,23 +31,23 @@ std::string get_cpptype(Types token_str) {
         break;
 
         case Type_string:
-            returner="std::string";
+            returner="string";
         break;
 
         case "array"_sh:
-            returner="std::vector<std::any>";
+            returner="vector<any>";
         break;
 
         case "tuple"_sh:
-            returner="std::tuple<std::any>";
+            returner="tuple<any>";
         break;
 
         case "pair"_sh:
-            returner="std::pair<std::any,std::any>";
+            returner="pair<any,any>";
         break;
 
         case "scr"_sh:
-            returner="std::function";
+            returner="function";
         break;
 
         case "file"_sh:
@@ -55,11 +55,11 @@ std::string get_cpptype(Types token_str) {
         break;
 
         case "ptr"_sh:
-            returner="std::any*";
+            returner="any*";
         break;
 
         default:
-            throw std::invalid_argument("Invalid datatype: "+token_str);
+            throw invalid_argument("Invalid datatype: "+token_str);
         break;
     }
     return returner;
@@ -67,32 +67,32 @@ std::string get_cpptype(Types token_str) {
 
 
 //Turns to AST into cpp
-std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
-    std::string _cpp;
+string to_cpp(vector<unique_ptr<ASTNode>> ast_tree) {
+    string _cpp;
 
     //Emitter functions
     struct emmiters {
 
         //Indentifies the Node Type
-        static std::string emit(std::shared_ptr<ASTNode> ast_node_ptr) {
+        static string emit(shared_ptr<ASTNode> ast_node_ptr) {
 
             // //Detected a Real
-            // if (std::dynamic_pointer_cast<RealNode>(ast_node_ptr)!=nullptr) {
+            // if (dynamic_pointer_cast<RealNode>(ast_node_ptr)!=nullptr) {
             //     return emit_real(ast_node_ptr);
             // }
 
             // //Detected an Assignment
-            // if (std::dynamic_pointer_cast<AssignmentNode>(ast_node_ptr)!=nullptr) {
+            // if (dynamic_pointer_cast<AssignmentNode>(ast_node_ptr)!=nullptr) {
             //     return emit_assignment(ast_node_ptr);
             // }
 
             // //Detected a Function Call
-            // if (std::dynamic_pointer_cast<CallNode>(ast_node_ptr)!=nullptr) {
+            // if (dynamic_pointer_cast<CallNode>(ast_node_ptr)!=nullptr) {
             //     return emit_call(ast_node_ptr);
             // }
 
             // //Detected a Binary Operations
-            // if (std::dynamic_pointer_cast<BinaryOpNode>(ast_node_ptr)!=nullptr) {
+            // if (dynamic_pointer_cast<BinaryOpNode>(ast_node_ptr)!=nullptr) {
             //     return emit_binOp(ast_node_ptr);
             // }
 
@@ -125,37 +125,37 @@ std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
         }
 
         //Real Node
-        static std::string emit_real(std::shared_ptr<ASTNode> ast_node_ptr) {
+        static string emit_real(shared_ptr<ASTNode> ast_node_ptr) {
             RealNode* ast_node=dynamic_cast<RealNode*>(ast_node_ptr.get());
 
-            return std::to_string((*ast_node).real);
+            return to_string((*ast_node).real);
         }
 
         //Assignment Node
-        static std::string emit_assignment(std::shared_ptr<ASTNode> ast_node_ptr) {
+        static string emit_assignment(shared_ptr<ASTNode> ast_node_ptr) {
             AssignmentNode* ast_node=dynamic_cast<AssignmentNode*>(ast_node_ptr.get());
-            std::shared_ptr __value=std::move((*ast_node).value);
+            shared_ptr __value=move((*ast_node).value);
 
-            std::string str_r=get_cpptype(ast_node->type)+" "+((*ast_node).identifier.get()->identifier)+" = "+emmiters::emit(__value);
+            string str_r=get_cpptype(ast_node->type)+" "+((*ast_node).identifier.get()->identifier)+" = "+emmiters::emit(__value);
 
             return str_r;
         }
 
         //Function Call Node
-        static std::string emit_call(std::shared_ptr<ASTNode> ast_node_ptr) {
+        static string emit_call(shared_ptr<ASTNode> ast_node_ptr) {
             CallNode* ast_node=dynamic_cast<CallNode*>(ast_node_ptr.get());
 
             switch (hash_djb2a(ast_node->identifier.get()->identifier)) {
                 case ("print"_sh):
-                    return "printf("+emmiters::emit(std::move(ast_node->args[0]))+")";
+                    return "printf("+emmiters::emit(move(ast_node->args[0]))+")";
                 break;
 
                 case ("div"_sh):
-                    return "div("+emmiters::emit(std::move(ast_node->args[0]))+","+emmiters::emit(std::move(ast_node->args[1]))+")";
+                    return "div("+emmiters::emit(move(ast_node->args[0]))+","+emmiters::emit(move(ast_node->args[1]))+")";
                 break;
 
                 case ("pow"_sh):
-                    return "pow("+emmiters::emit(std::move(ast_node->args[0]))+","+emmiters::emit(std::move(ast_node->args[1]))+")";
+                    return "pow("+emmiters::emit(move(ast_node->args[0]))+","+emmiters::emit(move(ast_node->args[1]))+")";
                 break;
 
                 default:
@@ -167,10 +167,10 @@ std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
         }
 
         //Binary Operator Node
-        static std::string emit_binOp(std::shared_ptr<ASTNode> ast_node_ptr) {
+        static string emit_binOp(shared_ptr<ASTNode> ast_node_ptr) {
             BinaryOpNode* ast_node=dynamic_cast<BinaryOpNode*>(ast_node_ptr.get());
 
-            std::string r_str="("+emmiters::emit(std::move(ast_node->left));
+            string r_str="("+emmiters::emit(move(ast_node->left));
             switch (ast_node->operate) {
                 case (Token_addition):
                     r_str+=" + ";
@@ -189,10 +189,10 @@ std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
                 break;
 
                 default:
-                    throw std::invalid_argument("Undefined Operator");
+                    throw invalid_argument("Undefined Operator");
                 break;
             }
-            r_str+=emmiters::emit(std::move(ast_node->right))+")";
+            r_str+=emmiters::emit(move(ast_node->right))+")";
 
             return r_str;
         }
@@ -200,7 +200,7 @@ std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
     
     //Emitter loop
     do {
-        std::shared_ptr<ASTNode> __test=move(ast_tree[0]);
+        shared_ptr<ASTNode> __test=move(ast_tree[0]);
         ast_tree.erase(ast_tree.begin());
         _cpp+=emmiters::emit(__test)+";";
     } while (ast_tree.size()>0);
@@ -210,10 +210,10 @@ std::string to_cpp(std::vector<std::unique_ptr<ASTNode>> ast_tree) {
 
 //Test
 // int main() {
-//     std::string stringed;
-//     std::getline(std::cin >> std::ws, stringed);
-//     std::string tokened=to_cpp(parser(to_token(stringed)));
-//     std::cout << tokened;
+//     string stringed;
+//     getline(cin >> ws, stringed);
+//     string tokened=to_cpp(parser(to_token(stringed)));
+//     cout << tokened;
     
 //     return 0;
 // }

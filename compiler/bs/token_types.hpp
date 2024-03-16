@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 
+using namespace std;
+
 
 enum Tokens {
     Token_newline,
@@ -54,7 +56,7 @@ enum Types {
     Type_pointer,
 };
 
-std::vector<std::string> keyWords={
+vector<string> keyWords={
     "if",
     "else",
     "func",
@@ -107,8 +109,8 @@ class BinaryOpNode : public ASTNode {
         NodeType m_type=Node_binOp;
         virtual int getName() {return m_type;};
         Tokens operate;
-        std::unique_ptr<ASTNode> left;
-        std::unique_ptr<ASTNode> right;
+        unique_ptr<ASTNode> left;
+        unique_ptr<ASTNode> right;
 };
 
 //Allows Strings to turn into identifiers
@@ -116,7 +118,7 @@ class HashNode : public ASTNode {
     public:
         NodeType m_type=Node_hash;
         virtual int getName() {return m_type;};
-        std::string Token_indentifier;
+        string Token_indentifier;
 };
 
 //Variables
@@ -124,7 +126,7 @@ class VariableNode : public ASTNode {
     public:
         NodeType m_type=Node_variable;
         virtual int getName() {return m_type;};
-        std::string identifier;
+        string identifier;
 };
 
 //Calls a function "indentifier(args)"
@@ -132,8 +134,8 @@ class CallNode : public ASTNode {
     public:
         NodeType m_type=Node_call;
         virtual int getName() {return m_type;};
-        std::unique_ptr<VariableNode> identifier;
-        std::vector<std::shared_ptr<ASTNode>> args;
+        unique_ptr<VariableNode> identifier;
+        vector<shared_ptr<ASTNode>> args;
 };
 
 //Assigns a value to a variable
@@ -141,8 +143,8 @@ class AssignmentNode : public ASTNode {
     public:
         NodeType m_type=Node_assignment;
         virtual int getName() {return m_type;};
-        std::unique_ptr<VariableNode> identifier;
-        std::unique_ptr<ASTNode> value;
+        unique_ptr<VariableNode> identifier;
+        unique_ptr<ASTNode> value;
         Types type=Type_auto;
 };
 
@@ -151,9 +153,9 @@ class FuncNode : public ASTNode {
     public:
         NodeType m_type=Node_func;
         virtual int getName() {return m_type;};
-        std::unique_ptr<VariableNode> identifier;
+        unique_ptr<VariableNode> identifier;
         Types type=Type_auto;
-        std::vector<std::tuple<std::string,Types,std::unique_ptr<ASTNode>>> params;
+        vector<tuple<string,Types,unique_ptr<ASTNode>>> params;
 };
 
 //If statement
@@ -161,9 +163,9 @@ class IfNode : public ASTNode {
     public:
         NodeType m_type=Node_if;
         virtual int getName() {return m_type;};
-        std::unique_ptr<ASTNode> expression;
-        std::vector<std::shared_ptr<ASTNode>> program;
+        unique_ptr<ASTNode> expression;
+        vector<shared_ptr<ASTNode>> program;
 };
 
 
-typedef std::pair<std::unique_ptr<ASTNode>,int> Node_package;
+typedef pair<unique_ptr<ASTNode>,int> Node_package;
