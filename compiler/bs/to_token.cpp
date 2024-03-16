@@ -7,9 +7,9 @@
 #include <memory>
 
 //Converts a BS program to a vector of Tokens
-vector<pair<int,string>> to_token(string line) {
+Token_vector to_token(string line) {
     //declaration
-    vector<pair<int,string>> Token_a;
+    Token_vector Token_a;
     int place=0;
 
     //processing
@@ -220,15 +220,3 @@ vector<pair<int,string>> to_token(string line) {
     //returns an vector of tokens
     return Token_a;
 }
-
-// int main() {
-//     string stringed;
-//     getline(cin >> ws, stringed);
-//     vector tokened=_to_token(stringed);
-//     for (int i=0;i<tokened.size();i++) {
-//         cout << tokened[i].first << "\n";
-//         cout << tokened[i].second << "\n";
-//     }
-//     system("pause");
-//     return 0;
-// }

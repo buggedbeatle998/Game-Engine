@@ -52,6 +52,9 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp",
-        "any": "cpp"
+        "any": "cpp",
+        "xstring": "cpp",
+        "filesystem": "cpp",
+        "xutility": "cpp"
     }
 }

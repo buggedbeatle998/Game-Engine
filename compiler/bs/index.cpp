@@ -1,4 +1,3 @@
-//#include "translator.hpp"
 #include "translator.cpp"
 
 #include <fstream>
@@ -6,8 +5,9 @@
 #include <memory>
 #include <filesystem>
 #include <algorithm>
+#include <iostream>
 
-using namespace std;
+//namespace fs = filesystem;
 
 
 int main(int argc,char* argv[]) {
@@ -25,7 +25,7 @@ int main(int argc,char* argv[]) {
         string filed=inputted.substr(inputted.find(" ")+1,inputted.size());
 
         if (command=="comp") {
-            if (filed.find(".")!=filed.size() && filed.substr(filed.find("."), filed.size())=="bs") {
+            if (filed.find(".")!=filed.size() && filed.substr(filed.find(".")+1, filed.size())=="bs") {
                 ifstream BS_file(cd+filed);
 
                 if (BS_file.is_open()) {
@@ -43,6 +43,7 @@ int main(int argc,char* argv[]) {
             continue;
         }
 
+
         if (command=="cd") {
             printf("%s\n",cd.c_str());
             continue;
@@ -56,6 +57,11 @@ int main(int argc,char* argv[]) {
             printf("%s\n",translator(coded).c_str());
             
             continue;
+        }
+
+        if (command=="find") {
+            for (const auto & entry : filesystem::directory_iterator(cd))
+                printf("%s\n", entry.path().c_str());
         }
     }
 

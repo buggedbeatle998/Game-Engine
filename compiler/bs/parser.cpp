@@ -24,9 +24,9 @@ inline constexpr auto operator"" _sh(const char *str, size_t len) {
 
 
 //Parses into an ATS
-vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
+AST_vector parser(Token_vector t_program) {
     //Declaration
-    vector<unique_ptr<ASTNode>> node_tree;
+    AST_vector node_tree;
     Node_package _parsed;
     Node_package _parsedn;
     int t_counter=0;
@@ -35,12 +35,12 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
     struct parsers {
 
         //Function that dectects which node to parse
-        static Node_package parse_left(vector<pair<int,string>> t_program,int t_counter) {
+        static Node_package parse_left(Token_vector t_program,int t_counter) {
             Node_package returner;
             switch (t_program[t_counter].first) {
                 case Token_indentifier:
                     if (find(keyWords.begin(),keyWords.end(),t_program[t_counter].second)!=keyWords.end()) {
-                        //returner=parse_keyword(t_program,t_counter);
+                        returner=parse_keywords(t_program,t_counter);
                     } else
 
                     if (t_program[t_counter+1].first==Token_assignment || (t_program[t_counter+1].first==Token_typeIdentifier && t_program[t_counter+2].first==Token_indentifier && t_program[t_counter+3].first==Token_assignment)) {
@@ -56,21 +56,15 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
                     throw invalid_argument("I really don't think it's possible to get this error message. If you're getting this you're doing somethhing seriously wrong with this: "+t_program[t_counter].second);
                 break;
             };
+            t_counter=returner.second;
 
             return move(returner);
         }
 
         //Parse a right expression
-        static Node_package parse_right(vector<pair<int,string>> t_program,int t_counter,unique_ptr<ASTNode> t_node=nullptr) {
+        static Node_package parse_right(Token_vector t_program,int t_counter,unique_ptr<ASTNode> t_node=nullptr) {
             Node_package returner;
             switch (t_program[t_counter].first) {
-                case Token_newline:
-                case Token_c_paren:
-                case Token_coma:
-                    t_counter++;
-                    return make_pair(nullptr,t_counter);
-                break;
-
                 case Token_indentifier:
                     if (t_program[t_counter+1].first==Token_o_paren) {
                         returner=parse_callExpression(t_program,t_counter);
@@ -80,14 +74,6 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
                 case Token_real:
                     returner=parse_real(t_program,t_counter);
                 break;
-
-                // case Token_addition:
-                // case Token_subtraction:
-                // case Token_multiplication:
-                // case Token_division:
-                //     returner=parsers::parse_binOps(t_program,t_counter,move(t_node));
-                //     t_counter=returner.second;
-                // break;
                 
                 case Token_o_paren:
                     t_counter++;
@@ -118,16 +104,9 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
         }
 
         //Parse a right expression in a BinOp
-        static Node_package parse_right_inBinOP(const vector<pair<int,string>>& t_program,int t_counter,unique_ptr<ASTNode> t_node=nullptr) {
+        static Node_package parse_right_inBinOP(const Token_vector& t_program,int t_counter,unique_ptr<ASTNode> t_node=nullptr) {
             Node_package returner;
             switch (t_program[t_counter].first) {
-                case Token_newline:
-                case Token_c_paren:
-                case Token_coma:
-                    t_counter++;
-                    return make_pair(nullptr,t_counter);
-                break;
-
                 case Token_indentifier:
                     if (t_program[t_counter+1].first==Token_o_paren) {
                         returner=parse_callExpression(t_program,t_counter);
@@ -137,14 +116,6 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
                 case Token_real:
                     returner=parse_real(t_program,t_counter);
                 break;
-
-                // case Token_addition:
-                // case Token_subtraction:
-                // case Token_multiplication:
-                // case Token_division:
-                //     returner=parsers::parse_binOps(t_program,t_counter,move(t_node));
-                //     t_counter=returner.second;
-                // break;
                 
                 case Token_o_paren:
                     t_counter++;
@@ -166,16 +137,9 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
         }
 
         //Parse a right expression in a MultBinOp
-        static Node_package parse_right_inMultBinOP(vector<pair<int,string>> t_program,int t_counter,unique_ptr<ASTNode> t_node=nullptr) {
+        static Node_package parse_right_inMultBinOP(Token_vector t_program,int t_counter,unique_ptr<ASTNode> t_node=nullptr) {
             Node_package returner;
             switch (t_program[t_counter].first) {
-                case Token_newline:
-                case Token_c_paren:
-                case Token_coma:
-                    t_counter++;
-                    return make_pair(nullptr,t_counter);
-                break;
-
                 case Token_indentifier:
                     if (t_program[t_counter+1].first==Token_o_paren) {
                         returner=parse_callExpression(t_program,t_counter);
@@ -185,14 +149,6 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
                 case Token_real:
                     returner=parse_real(t_program,t_counter);
                 break;
-
-                // case Token_addition:
-                // case Token_subtraction:
-                // case Token_multiplication:
-                // case Token_division:
-                //     returner=parsers::parse_binOps(t_program,t_counter,move(t_node));
-                //     t_counter=returner.second;
-                // break;
                 
                 case Token_o_paren:
                     t_counter++;
@@ -209,14 +165,16 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
         }
 
         //Parse a Keyword
-        static Node_package parse_keywords(vector<pair<int,string>> t_program,int t_counter) {
+        static Node_package parse_keywords(Token_vector t_program,int t_counter) {
+            Node_package _returner;
+
             switch (hash_djb2a(t_program[t_counter].second)) {
                 case "if"_sh:
-                    
+                    _returner=parsers::parse_if(t_program,t_counter);
                 break;
             }
-            Node_package ted;
-            return ted;
+
+            return _returner;
         }
 
         //Check the Symbol
@@ -239,7 +197,7 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
         }
 
         //Parse Real Numbers
-        static pair<unique_ptr<RealNode>,int> parse_real(vector<pair<int,string>> t_program,int t_counter) {
+        static pair<unique_ptr<RealNode>,int> parse_real(Token_vector t_program,int t_counter) {
             RealNode __temp;
             __temp.real=stold(t_program[t_counter].second);
             t_counter++;
@@ -307,7 +265,7 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
         }
 
         //Parse Assignments
-        static pair<unique_ptr<AssignmentNode>,int> parse_assignment(vector<pair<int,string>> t_program,int t_counter) {
+        static pair<unique_ptr<AssignmentNode>,int> parse_assignment(Token_vector t_program,int t_counter) {
             AssignmentNode __temp;
             VariableNode __iden;
             __iden.identifier=t_program[t_counter].second;
@@ -330,7 +288,7 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
         }
 
         //Parses Function Calls
-        static pair<unique_ptr<CallNode>,int> parse_callExpression(vector<pair<int,string>> t_program,int t_counter) {
+        static pair<unique_ptr<CallNode>,int> parse_callExpression(Token_vector t_program,int t_counter ) {
             CallNode __temp;
             VariableNode __iden;
             __iden.identifier=t_program[t_counter].second;
@@ -352,7 +310,7 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
         }
 
         //Parses Binary Operations
-        static pair<unique_ptr<BinaryOpNode>,int> parse_binOps(vector<pair<int,string>> t_program,int t_counter,unique_ptr<ASTNode> _left) {
+        static pair<unique_ptr<BinaryOpNode>,int> parse_binOps(Token_vector t_program,int t_counter,unique_ptr<ASTNode> _left) {
             BinaryOpNode __temp;
             __temp.operate=Tokens(t_program[t_counter].first);
             __temp.left=move(_left);
@@ -374,7 +332,7 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
         }
 
         //Parses Mult Binary Operations
-        static pair<unique_ptr<BinaryOpNode>,int> parse_multBinOps(vector<pair<int,string>> t_program,int t_counter,unique_ptr<ASTNode> _left) {
+        static pair<unique_ptr<BinaryOpNode>,int> parse_multBinOps(Token_vector t_program,int t_counter,unique_ptr<ASTNode> _left) {
             BinaryOpNode __temp;
             __temp.operate=Tokens(t_program[t_counter].first);
             __temp.left=move(_left);
@@ -395,43 +353,53 @@ vector<unique_ptr<ASTNode>> parser(vector<pair<int,string>> t_program) {
             return __returner;
         }
 
-        static pair<unique_ptr<RealNode>,int> parse_if(vector<pair<int,string>> t_program,int t_counter) {
+        //Parses If Statements
+        static pair<unique_ptr<IfNode>,int> parse_if(Token_vector t_program,int t_counter) {
             IfNode __temp;
 
             t_counter++;
 
             Node_package con_parsed=parsers::parse_right(t_program, t_counter);
             __temp.expression=move(con_parsed.first);
+            t_counter=con_parsed.second;
 
             if (t_program[t_counter].first==Token_newline) t_counter++;
 
+            AST_vector s_tree;
+            Node_package s_parsed;
             if (t_program[t_counter++].first==Token_c_o_paren) {
-                // while (t_program[t_counter]==Token_c_c_paren)
-                // {
-                    
-                // }
+                if (t_program[t_counter].first==Token_newline) t_counter++;
+                
+                do {
+                    s_parsed=parsers::parse_left(t_program,t_counter);
+                    t_counter=s_parsed.second;
+
+                    if (t_program[t_counter].first==Token_c_c_paren) {
+                        break;
+                    } else if (t_program[t_counter].first!=Token_newline) {
+                        throw invalid_argument("Unexpected token: "+t_program[t_counter].second);
+                    } t_counter++;
+
+                    s_tree.emplace_back(move(s_parsed.first));
+                } while (t_program[t_counter].first!=Token_c_c_paren);
             }
-            pair<unique_ptr<RealNode>,int> ted;
-            return ted;
+            
+            t_counter++;
+            __temp.program=move(s_tree);
+            
+            return make_pair(make_unique<IfNode>(move(__temp)),t_counter);
         }
     };
 
     //Parsing loop
     do {
         _parsed=parsers::parse_left(t_program,t_counter);
-        t_counter=_parsed.second+1;
+        t_counter=_parsed.second;
+        if (t_program[t_counter].first!=Token_newline) {
+            throw invalid_argument("Unexpected token: "+t_program[t_counter].second);
+        } t_counter++;
         node_tree.emplace_back(move(_parsed.first));
     } while (t_counter<t_program.size());
 
     return node_tree;
 }
-
-//Test
-// int main() {
-//     string stringed;
-//     getline(cin >> ws, stringed);
-//     vector tokened=parser(stringed);
-//     // RealNode* ast_node=dynamic_cast<RealNode*>(tokened[0].get());
-//     // cout << (*ast_node).real;
-//     return 0;
-// }

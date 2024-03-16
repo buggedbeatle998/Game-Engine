@@ -164,8 +164,10 @@ class IfNode : public ASTNode {
         NodeType m_type=Node_if;
         virtual int getName() {return m_type;};
         unique_ptr<ASTNode> expression;
-        vector<shared_ptr<ASTNode>> program;
+        vector<unique_ptr<ASTNode>> program;
 };
 
 
 typedef pair<unique_ptr<ASTNode>,int> Node_package;
+typedef vector<pair<Tokens,string>> Token_vector;
+typedef vector<unique_ptr<ASTNode>> AST_vector;

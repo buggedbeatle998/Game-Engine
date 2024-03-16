@@ -67,7 +67,7 @@ string get_cpptype(Types token_str) {
 
 
 //Turns to AST into cpp
-string to_cpp(vector<unique_ptr<ASTNode>> ast_tree) {
+string to_cpp(AST_vector ast_tree) {
     string _cpp;
 
     //Emitter functions
@@ -75,27 +75,6 @@ string to_cpp(vector<unique_ptr<ASTNode>> ast_tree) {
 
         //Indentifies the Node Type
         static string emit(shared_ptr<ASTNode> ast_node_ptr) {
-
-            // //Detected a Real
-            // if (dynamic_pointer_cast<RealNode>(ast_node_ptr)!=nullptr) {
-            //     return emit_real(ast_node_ptr);
-            // }
-
-            // //Detected an Assignment
-            // if (dynamic_pointer_cast<AssignmentNode>(ast_node_ptr)!=nullptr) {
-            //     return emit_assignment(ast_node_ptr);
-            // }
-
-            // //Detected a Function Call
-            // if (dynamic_pointer_cast<CallNode>(ast_node_ptr)!=nullptr) {
-            //     return emit_call(ast_node_ptr);
-            // }
-
-            // //Detected a Binary Operations
-            // if (dynamic_pointer_cast<BinaryOpNode>(ast_node_ptr)!=nullptr) {
-            //     return emit_binOp(ast_node_ptr);
-            // }
-
             switch (dynamic_cast<ASTNode*>(ast_node_ptr.get())->getName()) {
                 //Detected a Real
                 case Node_real:
@@ -117,11 +96,15 @@ string to_cpp(vector<unique_ptr<ASTNode>> ast_tree) {
                     return emit_binOp(ast_node_ptr);
                 break;
 
+                //Detected a Binary Operations
+                case Node_if:
+                    return emit_if(ast_node_ptr);
+                break;
+
                 default:
                     return "";
                 break;
             }
-
         }
 
         //Real Node
@@ -196,6 +179,21 @@ string to_cpp(vector<unique_ptr<ASTNode>> ast_tree) {
 
             return r_str;
         }
+
+        //Binary Operator Node
+        static string emit_if(shared_ptr<ASTNode> ast_node_ptr) {
+            IfNode* ast_node=dynamic_cast<IfNode*>(ast_node_ptr.get());
+            string r_str="if (" + emmiters::emit(move(ast_node->expression)) + ") {";
+            AST_vector sub_tree=move(ast_node->program);
+            
+            for (int i=0;i<sub_tree.size();i++) {
+                r_str+=emmiters::emit(move(sub_tree[i]))+";";
+            }
+
+            r_str+="}";
+
+            return r_str;
+        }
     };
     
     //Emitter loop
@@ -207,13 +205,3 @@ string to_cpp(vector<unique_ptr<ASTNode>> ast_tree) {
 
     return _cpp;
 }
-
-//Test
-// int main() {
-//     string stringed;
-//     getline(cin >> ws, stringed);
-//     string tokened=to_cpp(parser(to_token(stringed)));
-//     cout << tokened;
-    
-//     return 0;
-// }
