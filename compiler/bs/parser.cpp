@@ -74,6 +74,10 @@ AST_vector parser(Token_vector t_program) {
                 case Token_real:
                     returner=parse_real(t_program,t_counter);
                 break;
+
+                case Token_string:
+                    returner=parse_string(t_program,t_counter);
+                break;
                 
                 case Token_o_paren:
                     t_counter++;
@@ -199,22 +203,25 @@ AST_vector parser(Token_vector t_program) {
         //Parse Real Numbers
         static pair<unique_ptr<RealNode>,int> parse_real(Token_vector t_program,int t_counter) {
             RealNode __temp;
-            __temp.real=stold(t_program[t_counter].second);
-            t_counter++;
+            __temp.real=stold(t_program[t_counter++].second);
             
             return make_pair(make_unique<RealNode>(move(__temp)),t_counter);
+        }
+
+        //Parse String
+        static pair<unique_ptr<StringNode>,int> parse_string(Token_vector t_program,int t_counter) {
+            StringNode __temp;
+            __temp._str=t_program[t_counter++].second;
+            
+            return make_pair(make_unique<StringNode>(move(__temp)),t_counter);
         }
 
         //Data Types
         static Types get_type(string token_str) {
             Types returner;
             switch (hash_djb2a(token_str)) {
-                case "undefined"_sh:
-                    returner=Type_undefined;
-                break;
-
-                case "noone"_sh:
-                    returner=Type_real;
+                case "void"_sh:
+                    returner=Type_void;
                 break;
 
                 case "auto"_sh:
@@ -353,21 +360,12 @@ AST_vector parser(Token_vector t_program) {
             return __returner;
         }
 
-        //Parses If Statements
-        static pair<unique_ptr<IfNode>,int> parse_if(Token_vector t_program,int t_counter) {
-            IfNode __temp;
-
-            t_counter++;
-
-            Node_package con_parsed=parsers::parse_right(t_program, t_counter);
-            __temp.expression=move(con_parsed.first);
-            t_counter=con_parsed.second;
-
-            if (t_program[t_counter].first==Token_newline) t_counter++;
-
+        //Parses Subprogram
+        static pair<AST_vector,int> parse_subprogram(Token_vector t_program,int t_counter) {
             AST_vector s_tree;
             Node_package s_parsed;
-            if (t_program[t_counter++].first==Token_c_o_paren) {
+            if (t_program[t_counter].first==Token_c_o_paren) {
+                t_counter++;
                 if (t_program[t_counter].first==Token_newline) t_counter++;
                 
                 do {
@@ -382,10 +380,44 @@ AST_vector parser(Token_vector t_program) {
 
                     s_tree.emplace_back(move(s_parsed.first));
                 } while (t_program[t_counter].first!=Token_c_c_paren);
+
+                t_counter++;
+
+            } else {
+                s_parsed=parsers::parse_left(t_program,t_counter);
+                t_counter=s_parsed.second;
+                s_tree.emplace_back(move(s_parsed.first));
             }
-            
+
+            return make_pair(move(s_tree),t_counter);
+        }
+
+        //Parses If Statements
+        static pair<unique_ptr<IfNode>,int> parse_if(Token_vector t_program,int t_counter) {
+            IfNode __temp;
+
             t_counter++;
-            __temp.program=move(s_tree);
+
+            Node_package con_parsed=parsers::parse_right(t_program, t_counter);
+            __temp.expression=move(con_parsed.first);
+            t_counter=con_parsed.second;
+
+            if (t_program[t_counter].first==Token_newline) t_counter++;
+
+            pair<AST_vector,int> sub_parsed=parsers::parse_subprogram(t_program,t_counter);
+            __temp.program=move(sub_parsed.first);
+            t_counter=sub_parsed.second;
+
+            if ((t_program[t_counter].first==Token_indentifier&&t_program[t_counter].second=="else")||(t_program[t_counter].first==Token_newline&&(t_program[t_counter+1].first==Token_indentifier&&t_program[t_counter+1].second=="else"))) {
+                if (t_program[t_counter].first==Token_newline) t_counter++;
+                t_counter++;
+                if (t_program[t_counter].first==Token_newline) t_counter++;
+
+                __temp.elsed=true;
+                sub_parsed=parsers::parse_subprogram(t_program,t_counter);
+                __temp.else_program=move(sub_parsed.first);
+                t_counter=sub_parsed.second;
+            }
             
             return make_pair(make_unique<IfNode>(move(__temp)),t_counter);
         }

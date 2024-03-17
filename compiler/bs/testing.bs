@@ -1,3 +1,8 @@
 if (4) {
-    x -> real = 5;
+    x -> real = "g\"e";
+} else if 4 {
+    x -> str = 6;
+} else {
+    x=5
+    y=45
 }

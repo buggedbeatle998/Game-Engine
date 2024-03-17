@@ -55,6 +55,7 @@
         "any": "cpp",
         "xstring": "cpp",
         "filesystem": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "chrono": "cpp"
     }
 }

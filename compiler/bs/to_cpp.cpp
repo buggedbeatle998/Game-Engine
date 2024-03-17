@@ -10,12 +10,8 @@
 string get_cpptype(Types token_str) {
     string returner;
     switch (token_str) {
-        case Type_undefined:
+        case Type_void:
             returner="void";
-        break;
-
-        case Type_noone:
-            returner="bool";
         break;
 
         case Type_auto:
@@ -80,6 +76,11 @@ string to_cpp(AST_vector ast_tree) {
                 case Node_real:
                     return emit_real(ast_node_ptr);
                 break;
+                
+                //Detected a String
+                case Node_string:
+                    return emit_string(ast_node_ptr);
+                break;
 
                 //Detected an Assignment
                 case Node_assignment:
@@ -112,6 +113,13 @@ string to_cpp(AST_vector ast_tree) {
             RealNode* ast_node=dynamic_cast<RealNode*>(ast_node_ptr.get());
 
             return to_string((*ast_node).real);
+        }
+
+        //String Node
+        static string emit_string(shared_ptr<ASTNode> ast_node_ptr) {
+            StringNode* ast_node=dynamic_cast<StringNode*>(ast_node_ptr.get());
+
+            return "\""+ast_node->_str+"\"";
         }
 
         //Assignment Node
@@ -191,6 +199,17 @@ string to_cpp(AST_vector ast_tree) {
             }
 
             r_str+="}";
+
+            if (ast_node->elsed) {
+                AST_vector sub_else_tree=move(ast_node->else_program);
+                r_str+=" else {";
+            
+                for (int i=0;i<sub_else_tree.size();i++) {
+                    r_str+=emmiters::emit(move(sub_else_tree[i]))+";";
+                }
+                
+                r_str+="}";
+            }
 
             return r_str;
         }

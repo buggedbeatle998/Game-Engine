@@ -30,7 +30,7 @@ Token_vector to_token(string line) {
             continue;
         }
 
-        //identifiers
+        //identifiers or datatypes
         if (regex_match(str_i,regex("([A-Za-z_])"))) {
             string _iden="";
             _iden+=str_i;
@@ -41,6 +41,22 @@ Token_vector to_token(string line) {
                 place++;
             }
             if (!regex_search(_iden,regex("([A-Za-z])"))) throw invalid_argument("Invalid Identifier: "+_iden);
+
+            if (_iden=="true") {
+                Token_a.push_back(make_pair(Token_real,"1"));
+                continue;
+            }
+
+            if (_iden=="false") {
+                Token_a.push_back(make_pair(Token_real,"0"));
+                continue;
+            }
+
+            if (_iden=="noone") {
+                Token_a.push_back(make_pair(Token_real,"-4"));
+                continue;
+            }
+
             Token_a.push_back(make_pair(Token_indentifier,_iden));
             continue;
         }
@@ -77,10 +93,9 @@ Token_vector to_token(string line) {
             string _temp=str_i;
             string _string="";
             str_i=line.at(place);
-            while (str_i!=_temp) {
-                _string+=str_i!="\"" ? str_i : "\\\"";
-                place++;
-                str_i=line.at(place);
+            while (str_i!=_temp||line.at(place-1)=='\\') {
+                _string+=str_i;
+                str_i=line.at(++place);
             }
             place++;
             Token_a.push_back(make_pair(Token_string,_string));

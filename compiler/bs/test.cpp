@@ -40,20 +40,23 @@ int main() {
     // struct hhhhh {
     //     static 
     // }
-    auto x = 1;
-    child2 child2_;
-    child2_.name="hhh";
-    child1 _temp;
-    std::unique_ptr<base> _cheesed = std::make_unique<child2>(child2_);
+    // auto x = 1;
+    // child2 child2_;
+    // child2_.name="hhh";
+    // child1 _temp;
+    // std::unique_ptr<base> _cheesed = std::make_unique<child2>(child2_);
     
-    std::cout << "hi: " << (_cheesed.get()->getName());
+    // std::cout << "hi: " << (_cheesed.get()->getName());
 
     
-    std::vector<std::any> cheese={1,"hi",true};
+    // std::vector<std::any> cheese={1,"hi",true};
 
-    for (int i=0;i++;i<3) {
-        std::cout << "hi";//cheese[i];
-    }
+    // for (int i=0;i++;i<3) {
+    //     std::cout << "hi";//cheese[i];
+    // }
+
+    int __test;
+    std::cout << __test;
 
     return 0;
 }

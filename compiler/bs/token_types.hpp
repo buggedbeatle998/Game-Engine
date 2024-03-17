@@ -42,8 +42,7 @@ enum Tokens {
 };
 
 enum Types {
-    Type_undefined,
-    Type_noone,
+    Type_void,
     Type_auto,
     Type_boolean,
     Type_real,
@@ -58,24 +57,26 @@ enum Types {
 
 vector<string> keyWords={
     "if",
-    "else",
+//    "else",
+    "switch",
     "func",
     "return",
     "del",
     "for",
     "while",
     "do",
+    "goto",
     "continue",
     "break",
     "exit",
     "assert",
     "in",
-    "is",
 };
 
 enum NodeType {
     Node_ASTnode,
     Node_real,
+    Node_string,
     Node_binOp,
     Node_hash,
     Node_variable,
@@ -101,6 +102,14 @@ class RealNode : public ASTNode {
         NodeType m_type=Node_real;
         virtual int getName() {return m_type;};
         long double real;
+};
+
+//Any string
+class StringNode : public ASTNode {
+    public:
+        NodeType m_type=Node_string;
+        virtual int getName() {return m_type;};
+        string _str;
 };
 
 //Plus, Minus, Divide, Multiplication
@@ -165,6 +174,8 @@ class IfNode : public ASTNode {
         virtual int getName() {return m_type;};
         unique_ptr<ASTNode> expression;
         vector<unique_ptr<ASTNode>> program;
+        bool elsed=false;
+        vector<unique_ptr<ASTNode>> else_program;
 };
 
 
