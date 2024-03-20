@@ -83,6 +83,8 @@ enum NodeType {
     Node_call,
     Node_assignment,
     Node_if,
+    Node_while,
+    Node_for,
     Node_func,
 };
 
@@ -176,6 +178,16 @@ class IfNode : public ASTNode {
         vector<unique_ptr<ASTNode>> program;
         bool elsed=false;
         vector<unique_ptr<ASTNode>> else_program;
+};
+
+//While loops
+class WhileNode : public ASTNode {
+    public:
+        NodeType m_type=Node_while;
+        virtual int getName() {return m_type;};
+        unique_ptr<ASTNode> expression;
+        vector<unique_ptr<ASTNode>> program;
+        bool top;
 };
 
 

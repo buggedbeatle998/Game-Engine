@@ -102,6 +102,11 @@ string to_cpp(AST_vector ast_tree) {
                     return emit_if(ast_node_ptr);
                 break;
 
+                //Detected a While Loops
+                case Node_while:
+                    return emit_while(ast_node_ptr);
+                break;
+
                 default:
                     return "";
                 break;
@@ -209,6 +214,34 @@ string to_cpp(AST_vector ast_tree) {
                 }
                 
                 r_str+="}";
+            }
+
+            return r_str;
+        }
+
+        //While Node
+        static string emit_while(shared_ptr<ASTNode> ast_node_ptr) {
+            WhileNode* ast_node=dynamic_cast<WhileNode*>(ast_node_ptr.get());
+            string r_str;
+
+            if (ast_node->top) {
+                r_str="while (" + emmiters::emit(move(ast_node->expression)) + ") {";
+                AST_vector sub_tree=move(ast_node->program);
+                
+                for (int i=0;i<sub_tree.size();i++) {
+                    r_str+=emmiters::emit(move(sub_tree[i]))+";";
+                }
+
+                r_str+="}";
+            } else {
+                r_str="do {";
+                AST_vector sub_tree=move(ast_node->program);
+                
+                for (int i=0;i<sub_tree.size();i++) {
+                    r_str+=emmiters::emit(move(sub_tree[i]))+";";
+                }
+
+                r_str+="} while (" + emmiters::emit(move(ast_node->expression)) + ")";
             }
 
             return r_str;

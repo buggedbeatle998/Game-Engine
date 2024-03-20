@@ -176,6 +176,14 @@ AST_vector parser(Token_vector t_program) {
                 case "if"_sh:
                     _returner=parsers::parse_if(t_program,t_counter);
                 break;
+                
+                case "while"_sh:
+                    _returner=parsers::parse_while(t_program,t_counter);
+                break;
+
+                case "do"_sh:
+                    _returner=parsers::parse_do(t_program,t_counter);
+                break;
             }
 
             return _returner;
@@ -420,6 +428,49 @@ AST_vector parser(Token_vector t_program) {
             }
             
             return make_pair(make_unique<IfNode>(move(__temp)),t_counter);
+        }
+
+        //Parses While Loops
+        static pair<unique_ptr<WhileNode>,int> parse_while(Token_vector t_program,int t_counter) {
+            WhileNode __temp;
+            __temp.top=true;
+
+            t_counter++;
+
+            Node_package con_parsed=parsers::parse_right(t_program, t_counter);
+            __temp.expression=move(con_parsed.first);
+            t_counter=con_parsed.second;
+
+            if (t_program[t_counter].first==Token_newline) t_counter++;
+
+            pair<AST_vector,int> sub_parsed=parsers::parse_subprogram(t_program,t_counter);
+            __temp.program=move(sub_parsed.first);
+            t_counter=sub_parsed.second;
+            
+            return make_pair(make_unique<WhileNode>(move(__temp)),t_counter);
+        }
+
+        //Parses Do Loops
+        static pair<unique_ptr<WhileNode>,int> parse_do(Token_vector t_program,int t_counter) {
+            WhileNode __temp;
+            __temp.top=false;
+
+            if (t_program[t_counter].first==Token_newline) t_counter++;
+
+            pair<AST_vector,int> sub_parsed=parsers::parse_subprogram(t_program,t_counter);
+            __temp.program=move(sub_parsed.first);
+            t_counter=sub_parsed.second;
+
+            if (t_program[t_counter].first==Token_newline) t_counter++;
+            if (!(t_program[t_counter].first==Token_indentifier&&t_program[t_counter].second=="else")) throw invalid_argument("Expected: while\n got: " + t_program[t_counter].second);
+            t_counter++;
+
+            Node_package con_parsed=parsers::parse_right(t_program, t_counter);
+            __temp.expression=move(con_parsed.first);
+            t_counter=con_parsed.second;
+
+            
+            return make_pair(make_unique<WhileNode>(move(__temp)),t_counter);
         }
     };
 
