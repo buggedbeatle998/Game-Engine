@@ -24,6 +24,18 @@ int main(int argc,char* argv[]) {
 
         string filed=inputted.substr(inputted.find(" ")+1,inputted.size());
 
+        if (command=="test") {
+            ifstream BS_file(cd+"testing.bs");
+
+            if (BS_file.is_open()) {
+                stringstream buffer;
+                buffer << BS_file.rdbuf();
+                printf("%s\n",translator(buffer.str()).c_str());
+            } else {
+                printf("File \"testing.bs\" does not exist!\n");
+            }
+        }
+
         if (command=="comp") {
             if (filed.find(".")!=filed.size() && filed.substr(filed.find(".")+1, filed.size())=="bs") {
                 ifstream BS_file(cd+filed);

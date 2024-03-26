@@ -1,10 +1,11 @@
 //#include "translator.hpp"
+#include "token_types.hpp"
+#include "to_token.cpp"
+#include "parser.cpp"
 #include "to_cpp.cpp"
 
 #include <string>
-#include <iostream>
 #include <vector>
-#include <regex>
 #include <memory>
 #include <utility>
 

@@ -1,3 +1,2 @@
-do {
-    true x = 5;
-} while false;
+while 9
+    x = 5;

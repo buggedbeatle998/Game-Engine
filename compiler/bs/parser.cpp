@@ -1,4 +1,4 @@
-#include "to_token.cpp"
+#include "token_types.hpp"
 
 #include <string>
 #include <iostream>
