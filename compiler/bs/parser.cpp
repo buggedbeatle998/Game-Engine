@@ -314,8 +314,7 @@ AST_vector parser(Token_vector t_program) {
             do {
                 t_counter++;
                 Node_package __parsed=parsers::parse_right(t_program,t_counter);
-                shared_ptr<ASTNode> __arg=move(__parsed.first);
-                __temp.args.emplace_back(__arg);
+                __temp.args.emplace_back(move(__parsed.first));
                 t_counter=__parsed.second;
             } while (t_program[t_counter].first!=Token_c_paren);
 
@@ -471,6 +470,40 @@ AST_vector parser(Token_vector t_program) {
 
             
             return make_pair(make_unique<WhileNode>(move(__temp)),t_counter);
+        }
+
+        //Parses Function Declaration
+        static pair<unique_ptr<FuncNode>,int> parse_func(Token_vector t_program,int t_counter) {
+            FuncNode __temp;
+
+            t_counter++;
+            
+            Node_package iden_parsed=parsers::parse_right(t_program, t_counter);
+            __temp.identifier=;
+            VariableNode __iden;
+            __iden.identifier=move(iden_parsed.first);
+            Node_package con_parsed=parsers::parse_right(t_program, t_counter);
+            __temp.expression=move(con_parsed.first);
+            t_counter=con_parsed.second;
+
+            if (t_program[t_counter].first==Token_newline) t_counter++;
+
+            pair<AST_vector,int> sub_parsed=parsers::parse_subprogram(t_program,t_counter);
+            __temp.program=move(sub_parsed.first);
+            t_counter=sub_parsed.second;
+
+            if ((t_program[t_counter].first==Token_indentifier&&t_program[t_counter].second=="else")||(t_program[t_counter].first==Token_newline&&(t_program[t_counter+1].first==Token_indentifier&&t_program[t_counter+1].second=="else"))) {
+                if (t_program[t_counter].first==Token_newline) t_counter++;
+                t_counter++;
+                if (t_program[t_counter].first==Token_newline) t_counter++;
+
+                __temp.elsed=true;
+                sub_parsed=parsers::parse_subprogram(t_program,t_counter);
+                __temp.else_program=move(sub_parsed.first);
+                t_counter=sub_parsed.second;
+            }
+            
+            return make_pair(make_unique<IfNode>(move(__temp)),t_counter);
         }
     };
 

@@ -146,7 +146,7 @@ class CallNode : public ASTNode {
         NodeType m_type=Node_call;
         virtual int getName() {return m_type;};
         unique_ptr<VariableNode> identifier;
-        vector<shared_ptr<ASTNode>> args;
+        vector<unique_ptr<ASTNode>> args;
 };
 
 //Assigns a value to a variable
