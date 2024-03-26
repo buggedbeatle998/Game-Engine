@@ -1,4 +1,4 @@
-#include "translator.cpp"
+#include "translator.hpp"
 
 #include <fstream>
 #include <string>
@@ -8,6 +8,7 @@
 #include <iostream>
 
 //namespace fs = filesystem;
+using namespace std;
 
 
 int main(int argc,char* argv[]) {

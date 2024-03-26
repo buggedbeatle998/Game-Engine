@@ -6,21 +6,7 @@
 #include <regex>
 #include <memory>
 #include <utility>
-
-
-//Hasher
-inline constexpr auto hash_djb2a(const string_view sv) {
-    unsigned long hash{ 5381 };
-    for (unsigned char c : sv) {
-        hash = ((hash << 5) + hash) ^ c;
-    }
-    return hash;
-}
- 
-//Turns it into a method
-inline constexpr auto operator"" _sh(const char *str, size_t len) {
-    return hash_djb2a(string_view{ str, len });
-}
+#include "util.hpp"
 
 
 //Parses into an ATS
@@ -473,38 +459,38 @@ AST_vector parser(Token_vector t_program) {
         }
 
         //Parses Function Declaration
-        static pair<unique_ptr<FuncNode>,int> parse_func(Token_vector t_program,int t_counter) {
-            FuncNode __temp;
+        // static pair<unique_ptr<FuncNode>,int> parse_func(Token_vector t_program,int t_counter) {
+        //     FuncNode __temp;
 
-            t_counter++;
+        //     t_counter++;
             
-            Node_package iden_parsed=parsers::parse_right(t_program, t_counter);
-            __temp.identifier=;
-            VariableNode __iden;
-            __iden.identifier=move(iden_parsed.first);
-            Node_package con_parsed=parsers::parse_right(t_program, t_counter);
-            __temp.expression=move(con_parsed.first);
-            t_counter=con_parsed.second;
+        //     Node_package iden_parsed=parsers::parse_right(t_program, t_counter);
+        //     __temp.identifier=;
+        //     VariableNode __iden;
+        //     __iden.identifier=move(iden_parsed.first);
+        //     Node_package con_parsed=parsers::parse_right(t_program, t_counter);
+        //     __temp.expression=move(con_parsed.first);
+        //     t_counter=con_parsed.second;
 
-            if (t_program[t_counter].first==Token_newline) t_counter++;
+        //     if (t_program[t_counter].first==Token_newline) t_counter++;
 
-            pair<AST_vector,int> sub_parsed=parsers::parse_subprogram(t_program,t_counter);
-            __temp.program=move(sub_parsed.first);
-            t_counter=sub_parsed.second;
+        //     pair<AST_vector,int> sub_parsed=parsers::parse_subprogram(t_program,t_counter);
+        //     __temp.program=move(sub_parsed.first);
+        //     t_counter=sub_parsed.second;
 
-            if ((t_program[t_counter].first==Token_indentifier&&t_program[t_counter].second=="else")||(t_program[t_counter].first==Token_newline&&(t_program[t_counter+1].first==Token_indentifier&&t_program[t_counter+1].second=="else"))) {
-                if (t_program[t_counter].first==Token_newline) t_counter++;
-                t_counter++;
-                if (t_program[t_counter].first==Token_newline) t_counter++;
+        //     if ((t_program[t_counter].first==Token_indentifier&&t_program[t_counter].second=="else")||(t_program[t_counter].first==Token_newline&&(t_program[t_counter+1].first==Token_indentifier&&t_program[t_counter+1].second=="else"))) {
+        //         if (t_program[t_counter].first==Token_newline) t_counter++;
+        //         t_counter++;
+        //         if (t_program[t_counter].first==Token_newline) t_counter++;
 
-                __temp.elsed=true;
-                sub_parsed=parsers::parse_subprogram(t_program,t_counter);
-                __temp.else_program=move(sub_parsed.first);
-                t_counter=sub_parsed.second;
-            }
+        //         __temp.elsed=true;
+        //         sub_parsed=parsers::parse_subprogram(t_program,t_counter);
+        //         __temp.else_program=move(sub_parsed.first);
+        //         t_counter=sub_parsed.second;
+        //     }
             
-            return make_pair(make_unique<IfNode>(move(__temp)),t_counter);
-        }
+        //     return make_pair(make_unique<IfNode>(move(__temp)),t_counter);
+        // }
     };
 
     //Parsing loop

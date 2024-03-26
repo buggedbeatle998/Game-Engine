@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TOKEN_TYPES_HPP
+#define TOKEN_TYPES_HPP
 
 #include <string>
 #include <vector>
@@ -194,3 +195,5 @@ class WhileNode : public ASTNode {
 typedef pair<unique_ptr<ASTNode>,int> Node_package;
 typedef vector<pair<Tokens,string>> Token_vector;
 typedef vector<unique_ptr<ASTNode>> AST_vector;
+
+#endif

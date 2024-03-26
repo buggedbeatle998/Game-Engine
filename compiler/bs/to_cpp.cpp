@@ -1,65 +1,13 @@
+#include "to_cpp.hpp"
+
 #include "token_types.hpp"
+#include "util.hpp"
 
 #include <string>
 #include <iostream>
 #include <vector>
 #include <regex>
 #include <memory>
-
-
-string get_cpptype(Types token_str) {
-    string returner;
-    switch (token_str) {
-        case Type_void:
-            returner="void";
-        break;
-
-        case Type_auto:
-            returner="auto";
-        break;
-
-        case Type_boolean:
-            returner="bool";
-        break;
-
-        case Type_real:
-            returner="long double";
-        break;
-
-        case Type_string:
-            returner="string";
-        break;
-
-        case "array"_sh:
-            returner="vector<any>";
-        break;
-
-        case "tuple"_sh:
-            returner="tuple<any>";
-        break;
-
-        case "pair"_sh:
-            returner="pair<any,any>";
-        break;
-
-        case "scr"_sh:
-            returner="function";
-        break;
-
-        case "file"_sh:
-            returner="ifstream";
-        break;
-
-        case "ptr"_sh:
-            returner="any*";
-        break;
-
-        default:
-            throw invalid_argument("Invalid datatype: "+token_str);
-        break;
-    }
-    return returner;
-}
 
 
 //Turns to AST into cpp

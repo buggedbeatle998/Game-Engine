@@ -1,8 +1,9 @@
-//#include "translator.hpp"
+#include "translator.hpp"
+
 #include "token_types.hpp"
-#include "to_token.cpp"
-#include "parser.cpp"
-#include "to_cpp.cpp"
+#include "to_token.hpp"
+#include "parser.hpp"
+#include "to_cpp.hpp"
 
 #include <string>
 #include <vector>
