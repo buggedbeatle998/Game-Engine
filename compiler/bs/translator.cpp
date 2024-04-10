@@ -14,13 +14,13 @@
 string translator(string program) {
 
     //Convert the program to a vector of Tokens
-    Token_vector tokened=to_token(program+";");
+    Token_vector tokened = to_token(program + ";");
 
     //Convert the Tokens to a Left-Right Abstract Syntax Tree
-    AST_vector ATS_tree=parser(tokened);
+    AST_vector ATS_tree = parser(tokened);
 
     //Converts the AST to a C++ Program
-    string cpp_program=to_cpp(move(ATS_tree));
+    string cpp_program = to_cpp(move(ATS_tree));
 
 
     return cpp_program;

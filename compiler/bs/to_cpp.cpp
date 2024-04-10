@@ -19,7 +19,7 @@ string to_cpp(AST_vector ast_tree) {
 
         //Indentifies the Node Type
         static string emit(shared_ptr<ASTNode> ast_node_ptr) {
-            switch (dynamic_cast<ASTNode*>(ast_node_ptr.get())->getName()) {
+            switch (dynamic_cast<ASTNode*> (ast_node_ptr.get()) -> getName()) {
                 //Detected a Real
                 case Node_real:
                     return emit_real(ast_node_ptr);
@@ -63,43 +63,43 @@ string to_cpp(AST_vector ast_tree) {
 
         //Real Node
         static string emit_real(shared_ptr<ASTNode> ast_node_ptr) {
-            RealNode* ast_node=dynamic_cast<RealNode*>(ast_node_ptr.get());
+            RealNode* ast_node = dynamic_cast<RealNode*> (ast_node_ptr.get());
 
             return to_string((*ast_node).real);
         }
 
         //String Node
         static string emit_string(shared_ptr<ASTNode> ast_node_ptr) {
-            StringNode* ast_node=dynamic_cast<StringNode*>(ast_node_ptr.get());
+            StringNode* ast_node = dynamic_cast<StringNode*> (ast_node_ptr.get());
 
-            return "\""+ast_node->_str+"\"";
+            return "\"" + ast_node -> _str + "\"";
         }
 
         //Assignment Node
         static string emit_assignment(shared_ptr<ASTNode> ast_node_ptr) {
-            AssignmentNode* ast_node=dynamic_cast<AssignmentNode*>(ast_node_ptr.get());
-            shared_ptr __value=move((*ast_node).value);
+            AssignmentNode* ast_node = dynamic_cast<AssignmentNode*> (ast_node_ptr.get());
+            shared_ptr __value = move((*ast_node).value);
 
-            string str_r=get_cpptype(ast_node->type)+" "+((*ast_node).identifier.get()->identifier)+" = "+emmiters::emit(__value);
+            string str_r = get_cpptype(ast_node -> type) + " " + ((*ast_node).identifier.get() -> identifier) + " = " + emmiters::emit(__value);
 
             return str_r;
         }
 
         //Function Call Node
         static string emit_call(shared_ptr<ASTNode> ast_node_ptr) {
-            CallNode* ast_node=dynamic_cast<CallNode*>(ast_node_ptr.get());
+            CallNode* ast_node = dynamic_cast<CallNode*> (ast_node_ptr.get());
 
-            switch (hash_djb2a(ast_node->identifier.get()->identifier)) {
+            switch (hash_djb2a(ast_node -> identifier.get() -> identifier)) {
                 case ("print"_sh):
-                    return "printf("+emmiters::emit(move(ast_node->args[0]))+")";
+                    return "printf(" + emmiters::emit(move(ast_node -> args[0])) + ")";
                 break;
 
                 case ("div"_sh):
-                    return "div("+emmiters::emit(move(ast_node->args[0]))+","+emmiters::emit(move(ast_node->args[1]))+")";
+                    return "div(" + emmiters::emit(move(ast_node -> args[0])) + ", " + emmiters::emit(move(ast_node -> args[1])) + ")";
                 break;
 
                 case ("pow"_sh):
-                    return "pow("+emmiters::emit(move(ast_node->args[0]))+","+emmiters::emit(move(ast_node->args[1]))+")";
+                    return "pow(" + emmiters::emit(move(ast_node -> args[0])) + ", " + emmiters::emit(move(ast_node -> args[1])) + ")";
                 break;
 
                 default:
@@ -112,56 +112,56 @@ string to_cpp(AST_vector ast_tree) {
 
         //Binary Operator Node
         static string emit_binOp(shared_ptr<ASTNode> ast_node_ptr) {
-            BinaryOpNode* ast_node=dynamic_cast<BinaryOpNode*>(ast_node_ptr.get());
+            BinaryOpNode* ast_node = dynamic_cast<BinaryOpNode*> (ast_node_ptr.get());
 
-            string r_str="("+emmiters::emit(move(ast_node->left));
-            switch (ast_node->operate) {
+            string r_str = "(" + emmiters::emit(move(ast_node -> left));
+            switch (ast_node -> operate) {
                 case (Token_addition):
-                    r_str+=" + ";
+                    r_str += " + ";
                 break;
 
                 case (Token_subtraction):
-                    r_str+=" - ";
+                    r_str += " - ";
                 break;
 
                 case (Token_multiplication):
-                    r_str+=" * ";
+                    r_str += " * ";
                 break;
 
                 case (Token_division):
-                    r_str+=" / ";
+                    r_str += " / ";
                 break;
 
                 default:
                     throw invalid_argument("Undefined Operator");
                 break;
             }
-            r_str+=emmiters::emit(move(ast_node->right))+")";
+            r_str += emmiters::emit(move(ast_node -> right)) + ")";
 
             return r_str;
         }
 
         //If Node
         static string emit_if(shared_ptr<ASTNode> ast_node_ptr) {
-            IfNode* ast_node=dynamic_cast<IfNode*>(ast_node_ptr.get());
-            string r_str="if (" + emmiters::emit(move(ast_node->expression)) + ") {";
-            AST_vector sub_tree=move(ast_node->program);
+            IfNode* ast_node = dynamic_cast<IfNode*> (ast_node_ptr.get());
+            string r_str = "if (" + emmiters::emit(move(ast_node -> expression)) + ") {";
+            AST_vector sub_tree = move(ast_node -> program);
             
-            for (int i=0;i<sub_tree.size();i++) {
-                r_str+=emmiters::emit(move(sub_tree[i]))+";";
+            for (int i = 0; i < sub_tree.size(); i++) {
+                r_str += emmiters::emit(move(sub_tree[i])) + ";";
             }
 
-            r_str+="}";
+            r_str += "}";
 
-            if (ast_node->elsed) {
-                AST_vector sub_else_tree=move(ast_node->else_program);
-                r_str+=" else {";
+            if (ast_node -> elsed) {
+                AST_vector sub_else_tree = move(ast_node -> else_program);
+                r_str += " else {";
             
-                for (int i=0;i<sub_else_tree.size();i++) {
-                    r_str+=emmiters::emit(move(sub_else_tree[i]))+";";
+                for (int i = 0; i < sub_else_tree.size(); i++) {
+                    r_str += emmiters::emit(move(sub_else_tree[i])) + ";";
                 }
                 
-                r_str+="}";
+                r_str += "}";
             }
 
             return r_str;
@@ -169,27 +169,27 @@ string to_cpp(AST_vector ast_tree) {
 
         //While Node
         static string emit_while(shared_ptr<ASTNode> ast_node_ptr) {
-            WhileNode* ast_node=dynamic_cast<WhileNode*>(ast_node_ptr.get());
+            WhileNode* ast_node = dynamic_cast<WhileNode*> (ast_node_ptr.get());
             string r_str;
 
-            if (ast_node->top) {
-                r_str="while (" + emmiters::emit(move(ast_node->expression)) + ") {";
-                AST_vector sub_tree=move(ast_node->program);
+            if (ast_node -> top) {
+                r_str = "while (" + emmiters::emit(move(ast_node -> expression)) + ") {";
+                AST_vector sub_tree = move(ast_node -> program);
                 
-                for (int i=0;i<sub_tree.size();i++) {
-                    r_str+=emmiters::emit(move(sub_tree[i]))+";";
+                for (int i = 0;i<sub_tree.size();i++) {
+                    r_str += emmiters::emit(move(sub_tree[i])) + ";";
                 }
 
-                r_str+="}";
+                r_str += "}";
             } else {
-                r_str="do {";
-                AST_vector sub_tree=move(ast_node->program);
+                r_str = "do {";
+                AST_vector sub_tree = move(ast_node -> program);
                 
-                for (int i=0;i<sub_tree.size();i++) {
-                    r_str+=emmiters::emit(move(sub_tree[i]))+";";
+                for (int i = 0;i<sub_tree.size();i++) {
+                    r_str += emmiters::emit(move(sub_tree[i])) + ";";
                 }
 
-                r_str+="} while (" + emmiters::emit(move(ast_node->expression)) + ")";
+                r_str += "} while (" + emmiters::emit(move(ast_node -> expression)) + ")";
             }
 
             return r_str;
@@ -198,9 +198,9 @@ string to_cpp(AST_vector ast_tree) {
     
     //Emitter loop
     do {
-        shared_ptr<ASTNode> __test=move(ast_tree[0]);
+        shared_ptr<ASTNode> __test = move(ast_tree[0]);
         ast_tree.erase(ast_tree.begin());
-        _cpp+=emmiters::emit(__test)+";";
+        _cpp += emmiters::emit(__test) + ";";
     } while (ast_tree.size()>0);
 
     return _cpp;
