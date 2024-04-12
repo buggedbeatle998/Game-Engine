@@ -16,7 +16,7 @@ inline constexpr unsigned long hash_djb2a(const string_view sv) {
 }
  
 //Turns it into a method
-inline constexpr unsigned long operator"" _sh(const char* str, size_t len) {
+inline constexpr unsigned long operator ""_sh(const char* str, size_t len) {
     return hash_djb2a(string_view{str, len});
 }
 
