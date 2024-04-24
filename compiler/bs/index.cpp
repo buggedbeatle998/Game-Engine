@@ -7,11 +7,11 @@
 #include <algorithm>
 #include <iostream>
 
-//namespace fs = filesystem;
 using namespace std;
 
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
+    printf("Hello World!");
     while (true) {
         string inputted;
         getline(cin >> ws, inputted);

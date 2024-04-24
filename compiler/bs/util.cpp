@@ -6,20 +6,7 @@
 
 using namespace std;
 
-//Hasher
-inline constexpr unsigned long hash_djb2a(const string_view sv) {
-    unsigned long hash {5381};
-    for (unsigned char c : sv) {
-        hash = ((hash << 5) + hash) ^ c;
-    }
-    return hash;
-}
- 
-//Turns it into a method
-inline constexpr unsigned long operator ""_sh(const char* str, size_t len) {
-    return hash_djb2a(string_view{str, len});
-}
-
+// Converts a Token into a string
 string get_cpptype(Types token_str) {
     string returner;
     switch (token_str) {
@@ -43,28 +30,83 @@ string get_cpptype(Types token_str) {
             returner = "string";
         break;
 
-        case "array"_sh:
+        case Type_array:
             returner = "vector<any>";
         break;
 
-        case "tuple"_sh:
+        case Type_tuple:
             returner = "tuple<any>";
         break;
 
-        case "pair"_sh:
+        case Type_pair:
             returner = "pair<any,any>";
         break;
 
-        case "scr"_sh:
+        case Type_function:
             returner = "function";
         break;
 
-        case "file"_sh:
+        case Type_file:
             returner = "ifstream";
         break;
 
-        case "ptr"_sh:
+        case Type_pointer:
             returner = "any*";
+        break;
+
+        default:
+            throw invalid_argument("Invalid datatype: " + token_str);
+        break;
+    }
+    return returner;
+}
+
+// Converts a BS Data Type into a Token
+Types get_type(string token_str) {
+    Types returner;
+    switch (hash_djb2a(token_str)) {
+        case "void"_sh:
+            returner = Type_void;
+        break;
+
+        case "auto"_sh:
+            returner = Type_real;
+        break;
+
+        case "bool"_sh:
+            returner = Type_boolean;
+        break;
+
+        case "real"_sh:
+            returner = Type_real;
+        break;
+
+        case "str"_sh:
+            returner = Type_string;
+        break;
+
+        case "array"_sh:
+            returner = Type_array;
+        break;
+
+        case "tuple"_sh:
+            returner = Type_tuple;
+        break;
+
+        case "pair"_sh:
+            returner = Type_pair;
+        break;
+
+        case "scr"_sh:
+            returner = Type_function;
+        break;
+
+        case "file"_sh:
+            returner = Type_file;
+        break;
+
+        case "ptr"_sh:
+            returner = Type_pointer;
         break;
 
         default:

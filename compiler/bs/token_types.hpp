@@ -56,23 +56,7 @@ enum Types {
     Type_pointer,
 };
 
-vector<string> keyWords={
-    "if",
-//    "else",
-    "switch",
-    "func",
-    "return",
-    "del",
-    "for",
-    "while",
-    "do",
-    "goto",
-    "continue",
-    "break",
-    "exit",
-    "assert",
-    "in",
-};
+//vector<string> keyWords;
 
 enum NodeType {
     Node_ASTnode,

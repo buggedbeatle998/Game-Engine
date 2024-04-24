@@ -23,6 +23,22 @@ AST_vector parser(Token_vector t_program) {
         //Function that dectects which node to parse
         static Node_package parse_left(Token_vector t_program, int t_counter) {
             Node_package returner;
+            vector<string> keyWords = {
+                "if",
+                "switch",
+                "func",
+                "return",
+                "del",
+                "for",
+                "while",
+                "do",
+                "goto",
+                "continue",
+                "break",
+                "exit",
+                "assert",
+                "in",
+            };
             switch (t_program[t_counter].first) {
                 case Token_indentifier:
                     if (find(keyWords.begin(), keyWords.end(), t_program[t_counter].second) != keyWords.end()) {
@@ -208,61 +224,6 @@ AST_vector parser(Token_vector t_program) {
             __temp._str = t_program[t_counter++].second;
             
             return make_pair(make_unique<StringNode>(move(__temp)), t_counter);
-        }
-
-        //Data Types
-        static Types get_type(string token_str) {
-            Types returner;
-            switch (hash_djb2a(token_str)) {
-                case "void"_sh:
-                    returner = Type_void;
-                break;
-
-                case "auto"_sh:
-                    returner = Type_real;
-                break;
-
-                case "bool"_sh:
-                    returner = Type_boolean;
-                break;
-
-                case "real"_sh:
-                    returner = Type_real;
-                break;
-
-                case "str"_sh:
-                    returner = Type_string;
-                break;
-
-                case "array"_sh:
-                    returner = Type_array;
-                break;
-
-                case "tuple"_sh:
-                    returner = Type_tuple;
-                break;
-
-                case "pair"_sh:
-                    returner = Type_pair;
-                break;
-
-                case "scr"_sh:
-                    returner = Type_function;
-                break;
-
-                case "file"_sh:
-                    returner = Type_file;
-                break;
-
-                case "ptr"_sh:
-                    returner = Type_pointer;
-                break;
-
-                default:
-                    throw invalid_argument("Invalid datatype: " + token_str);
-                break;
-            }
-            return returner;
         }
 
         //Parse Assignments
