@@ -335,19 +335,18 @@ AST_vector parser(Token_vector t_program) {
             Node_package s_parsed;
             t_counter++;
             if (t_program[t_counter].first == Token_newline) t_counter++;
-            
-            do {
+
+            while (t_program[t_counter].first != Token_c_c_paren) {
                 s_parsed = parsers::parse_left(t_program, t_counter);
                 t_counter = s_parsed.second;
+                s_tree.emplace_back(move(s_parsed.first));
 
                 if (t_program[t_counter].first == Token_c_c_paren) {
                     break;
                 } else if (t_program[t_counter].first != Token_newline) {
                     throw invalid_argument("Unexpected token: " + t_program[t_counter].second);
                 } t_counter++;
-
-                s_tree.emplace_back(move(s_parsed.first));
-            } while (t_program[t_counter].first != Token_c_c_paren);
+            }
 
             t_counter++;
 
