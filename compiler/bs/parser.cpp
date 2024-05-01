@@ -9,18 +9,18 @@
 #include "util.hpp"
 
 
-//Parses into an ATS
+// Parses into an ATS
 AST_vector parser(Token_vector t_program) {
-    //Declaration
+    // Declaration
     AST_vector node_tree;
     Node_package _parsed;
     Node_package _parsedn;
     int t_counter = 0;
     
-    //Parser functions
+    // Parser functions
     struct parsers {
 
-        //Function that dectects which node to parse
+        // Function that dectects which node to parse
         static Node_package parse_left(Token_vector t_program, int t_counter) {
             Node_package returner;
             vector<string> keyWords = {
@@ -54,6 +54,10 @@ AST_vector parser(Token_vector t_program) {
                     }
                 break;
 
+                case Token_c_o_paren:
+                    return parsers::parse_programChunk(t_program, t_counter);
+                break;
+
                 default:
                     throw invalid_argument("I really don't think it's possible to get this error message. If you're getting this you're doing something seriously wrong with this: " + t_program[t_counter].second);
                 break;
@@ -63,27 +67,29 @@ AST_vector parser(Token_vector t_program) {
             return move(returner);
         }
 
-        //Parse a right expression
+        // Parse a right expression
         static Node_package parse_right(Token_vector t_program, int t_counter, unique_ptr<ASTNode> t_node = nullptr) {
             Node_package returner;
             switch (t_program[t_counter].first) {
                 case Token_indentifier:
                     if (t_program[t_counter + 1].first == Token_o_paren) {
-                        returner = parse_callExpression(t_program, t_counter);
+                        returner = parsers::parse_callExpression(t_program, t_counter);
                     }
                 break;
 
+                case Token_subtraction:
+                case Token_addition:
                 case Token_real:
-                    returner = parse_real(t_program, t_counter);
+                    returner = parsers::parse_real(t_program, t_counter);
                 break;
 
                 case Token_string:
-                    returner = parse_string(t_program, t_counter);
+                    returner = parsers::parse_string(t_program, t_counter);
                 break;
                 
                 case Token_o_paren:
                     t_counter++;
-                    returner = parsers::parse_right(t_program, t_counter);
+                    returner = parsers::parsers::parse_right(t_program, t_counter);
                     returner.second++;
                 break;
 
@@ -109,7 +115,7 @@ AST_vector parser(Token_vector t_program) {
             return move(returner);
         }
 
-        //Parse a right expression in a BinOp
+        // Parse a right expression in a BinOp
         static Node_package parse_right_inBinOP(const Token_vector& t_program, int t_counter, unique_ptr<ASTNode> t_node = nullptr) {
             Node_package returner;
             switch (t_program[t_counter].first) {
@@ -119,6 +125,8 @@ AST_vector parser(Token_vector t_program) {
                     }
                 break;
 
+                case Token_subtraction:
+                case Token_addition:
                 case Token_real:
                     returner = parse_real(t_program, t_counter);
                 break;
@@ -142,7 +150,7 @@ AST_vector parser(Token_vector t_program) {
             return move(returner);
         }
 
-        //Parse a right expression in a MultBinOp
+        // Parse a right expression in a MultBinOp
         static Node_package parse_right_inMultBinOP(Token_vector t_program, int t_counter, unique_ptr<ASTNode> t_node = nullptr) {
             Node_package returner;
             switch (t_program[t_counter].first) {
@@ -152,6 +160,8 @@ AST_vector parser(Token_vector t_program) {
                     }
                 break;
 
+                case Token_subtraction:
+                case Token_addition:
                 case Token_real:
                     returner = parse_real(t_program, t_counter);
                 break;
@@ -170,7 +180,7 @@ AST_vector parser(Token_vector t_program) {
             return move(returner);
         }
 
-        //Parse a Keyword
+        // Parse a Keyword
         static Node_package parse_keywords(Token_vector t_program, int t_counter) {
             Node_package _returner;
 
@@ -186,12 +196,15 @@ AST_vector parser(Token_vector t_program) {
                 case "do"_sh:
                     _returner = parsers::parse_do(t_program, t_counter);
                 break;
+
+                case "func"_sh:
+                break;
             }
 
             return _returner;
         }
 
-        //Check the Symbol
+        // Check the Symbol
         static int check_binOp(int _token) {
             switch (_token) {
                 case Token_multiplication:
@@ -210,7 +223,7 @@ AST_vector parser(Token_vector t_program) {
             }
         }
 
-        //Parse Real Numbers
+        // Parse Real Numbers
         static pair<unique_ptr<RealNode>, int> parse_real(Token_vector t_program, int t_counter) {
             RealNode __temp;
             __temp.real = stold(t_program[t_counter++].second);
@@ -218,7 +231,7 @@ AST_vector parser(Token_vector t_program) {
             return make_pair(make_unique<RealNode>(move(__temp)), t_counter);
         }
 
-        //Parse String
+        // Parse String
         static pair<unique_ptr<StringNode>, int> parse_string(Token_vector t_program, int t_counter) {
             StringNode __temp;
             __temp._str = t_program[t_counter++].second;
@@ -226,7 +239,7 @@ AST_vector parser(Token_vector t_program) {
             return make_pair(make_unique<StringNode>(move(__temp)), t_counter);
         }
 
-        //Parse Assignments
+        // Parse Assignments
         static pair<unique_ptr<AssignmentNode>, int> parse_assignment(Token_vector t_program, int t_counter) {
             AssignmentNode __temp;
             VariableNode __iden;
@@ -249,7 +262,7 @@ AST_vector parser(Token_vector t_program) {
             return make_pair(make_unique<AssignmentNode>(move(__temp)), t_counter);
         }
 
-        //Parses Function Calls
+        // Parses Function Calls
         static pair<unique_ptr<CallNode>, int> parse_callExpression(Token_vector t_program, int t_counter ) {
             CallNode __temp;
             VariableNode __iden;
@@ -257,7 +270,7 @@ AST_vector parser(Token_vector t_program) {
             __temp.identifier = make_unique<VariableNode>(__iden);
             t_counter++;
             
-            if (t_program[t_counter + 1].first != Token_c_paren)
+            if (t_program[++t_counter].first != Token_c_paren)
             do {
                 t_counter++;
                 Node_package __parsed = parsers::parse_right(t_program, t_counter);
@@ -270,7 +283,7 @@ AST_vector parser(Token_vector t_program) {
             return make_pair(make_unique<CallNode>(move(__temp)), t_counter);
         }
 
-        //Parses Binary Operations
+        // Parses Binary Operations
         static pair<unique_ptr<BinaryOpNode>, int> parse_binOps(Token_vector t_program, int t_counter, unique_ptr<ASTNode> _left) {
             BinaryOpNode __temp;
             __temp.operate = Tokens(t_program[t_counter].first);
@@ -292,7 +305,7 @@ AST_vector parser(Token_vector t_program) {
             return __returner;
         }
 
-        //Parses Mult Binary Operations
+        // Parses Mult Binary Operations
         static pair<unique_ptr<BinaryOpNode>, int> parse_multBinOps(Token_vector t_program, int t_counter, unique_ptr<ASTNode> _left) {
             BinaryOpNode __temp;
             __temp.operate = Tokens(t_program[t_counter].first);
@@ -314,39 +327,36 @@ AST_vector parser(Token_vector t_program) {
             return __returner;
         }
 
-        //Parses Subprogram
-        static pair<AST_vector, int> parse_subprogram(Token_vector t_program, int t_counter) {
+        // Parses Chunk
+        static pair<unique_ptr<ChunkNode>, int> parse_programChunk(Token_vector t_program, int t_counter) {
+            ChunkNode __temp;
+            
             AST_vector s_tree;
             Node_package s_parsed;
-            if (t_program[t_counter].first == Token_c_o_paren) {
-                t_counter++;
-                if (t_program[t_counter].first == Token_newline) t_counter++;
-                
-                do {
-                    s_parsed = parsers::parse_left(t_program, t_counter);
-                    t_counter = s_parsed.second;
-
-                    if (t_program[t_counter].first == Token_c_c_paren) {
-                        break;
-                    } else if (t_program[t_counter].first != Token_newline) {
-                        throw invalid_argument("Unexpected token: " + t_program[t_counter].second);
-                    } t_counter++;
-
-                    s_tree.emplace_back(move(s_parsed.first));
-                } while (t_program[t_counter].first != Token_c_c_paren);
-
-                t_counter++;
-
-            } else {
+            t_counter++;
+            if (t_program[t_counter].first == Token_newline) t_counter++;
+            
+            do {
                 s_parsed = parsers::parse_left(t_program, t_counter);
                 t_counter = s_parsed.second;
-                s_tree.emplace_back(move(s_parsed.first));
-            }
 
-            return make_pair(move(s_tree), t_counter);
+                if (t_program[t_counter].first == Token_c_c_paren) {
+                    break;
+                } else if (t_program[t_counter].first != Token_newline) {
+                    throw invalid_argument("Unexpected token: " + t_program[t_counter].second);
+                } t_counter++;
+
+                s_tree.emplace_back(move(s_parsed.first));
+            } while (t_program[t_counter].first != Token_c_c_paren);
+
+            t_counter++;
+
+            __temp.program = move(s_tree);
+
+            return make_pair(move(make_unique<ChunkNode>(move(__temp))), t_counter);
         }
 
-        //Parses If Statements
+        // Parses If Statements
         static pair<unique_ptr<IfNode>, int> parse_if(Token_vector t_program, int t_counter) {
             IfNode __temp;
 
@@ -358,7 +368,7 @@ AST_vector parser(Token_vector t_program) {
 
             if (t_program[t_counter].first == Token_newline) t_counter++;
 
-            pair<AST_vector, int> sub_parsed = parsers::parse_subprogram(t_program, t_counter);
+            pair<unique_ptr<ASTNode>, int> sub_parsed = parsers::parse_left(t_program, t_counter);
             __temp.program = move(sub_parsed.first);
             t_counter = sub_parsed.second;
 
@@ -368,7 +378,7 @@ AST_vector parser(Token_vector t_program) {
                 if (t_program[t_counter].first == Token_newline) t_counter++;
 
                 __temp.elsed = true;
-                sub_parsed = parsers::parse_subprogram(t_program, t_counter);
+                sub_parsed = parsers::parse_left(t_program, t_counter);
                 __temp.else_program = move(sub_parsed.first);
                 t_counter = sub_parsed.second;
             }
@@ -376,7 +386,7 @@ AST_vector parser(Token_vector t_program) {
             return make_pair(make_unique<IfNode>(move(__temp)), t_counter);
         }
 
-        //Parses While Loops
+        // Parses While Loops
         static pair<unique_ptr<WhileNode>, int> parse_while(Token_vector t_program, int t_counter) {
             WhileNode __temp;
             __temp.top = true;
@@ -389,26 +399,28 @@ AST_vector parser(Token_vector t_program) {
 
             if (t_program[t_counter].first == Token_newline) t_counter++;
 
-            pair<AST_vector, int> sub_parsed = parsers::parse_subprogram(t_program, t_counter);
+            pair<unique_ptr<ASTNode>, int> sub_parsed = parsers::parse_left(t_program, t_counter);
             __temp.program = move(sub_parsed.first);
             t_counter = sub_parsed.second;
             
             return make_pair(make_unique<WhileNode>(move(__temp)), t_counter);
         }
 
-        //Parses Do Loops
+        // Parses Do Loops
         static pair<unique_ptr<WhileNode>, int> parse_do(Token_vector t_program, int t_counter) {
             WhileNode __temp;
             __temp.top = false;
 
+            t_counter++;
+
             if (t_program[t_counter].first == Token_newline) t_counter++;
 
-            pair<AST_vector, int> sub_parsed = parsers::parse_subprogram(t_program, t_counter);
+            pair<unique_ptr<ASTNode>, int> sub_parsed = parsers::parse_left(t_program, t_counter);
             __temp.program = move(sub_parsed.first);
             t_counter = sub_parsed.second;
 
             if (t_program[t_counter].first == Token_newline) t_counter++;
-            if (!(t_program[t_counter].first == Token_indentifier && t_program[t_counter].second == "else")) throw invalid_argument("Expected: while\n got: " + t_program[t_counter].second);
+            if (!(t_program[t_counter].first == Token_indentifier && t_program[t_counter].second == "while")) throw invalid_argument("Expected: while\n got: " + t_program[t_counter].second);
             t_counter++;
 
             Node_package con_parsed = parsers::parse_right(t_program, t_counter);
@@ -419,7 +431,7 @@ AST_vector parser(Token_vector t_program) {
             return make_pair(make_unique<WhileNode>(move(__temp)), t_counter);
         }
 
-        //Parses Function Declaration
+        // Parses Function Declaration
         // static pair<unique_ptr<FuncNode>, int> parse_func(Token_vector t_program, int t_counter) {
         //     FuncNode __temp;
 
@@ -454,7 +466,7 @@ AST_vector parser(Token_vector t_program) {
         // }
     };
 
-    //Parsing loop
+    // Parsing loop
     do {
         _parsed = parsers::parse_left(t_program, t_counter);
         t_counter = _parsed.second;

@@ -56,7 +56,7 @@ enum Types {
     Type_pointer,
 };
 
-//vector<string> keyWords;
+// vector<string> keyWords;
 
 enum NodeType {
     Node_ASTnode,
@@ -71,9 +71,10 @@ enum NodeType {
     Node_while,
     Node_for,
     Node_func,
+    Node_chunk,
 };
 
-//Parent class
+// Parent class
 class ASTNode {
     public:
 
@@ -83,7 +84,11 @@ class ASTNode {
         virtual int getName() {return m_type;};
 };
 
-//Any real number
+typedef pair<unique_ptr<ASTNode>,int> Node_package;
+typedef vector<pair<Tokens,string>> Token_vector;
+typedef vector<unique_ptr<ASTNode>> AST_vector;
+
+// Any real number
 class RealNode : public ASTNode {
     public:
         NodeType m_type=Node_real;
@@ -91,7 +96,7 @@ class RealNode : public ASTNode {
         long double real;
 };
 
-//Any string
+// Any string
 class StringNode : public ASTNode {
     public:
         NodeType m_type=Node_string;
@@ -99,7 +104,7 @@ class StringNode : public ASTNode {
         string _str;
 };
 
-//Plus, Minus, Divide, Multiplication
+// Plus, Minus, Divide, Multiplication
 class BinaryOpNode : public ASTNode {
     public:
         NodeType m_type=Node_binOp;
@@ -109,7 +114,7 @@ class BinaryOpNode : public ASTNode {
         unique_ptr<ASTNode> right;
 };
 
-//Allows Strings to turn into identifiers
+// Allows Strings to turn into identifiers
 class HashNode : public ASTNode {
     public:
         NodeType m_type=Node_hash;
@@ -117,7 +122,7 @@ class HashNode : public ASTNode {
         string Token_indentifier;
 };
 
-//Variables
+// Variables
 class VariableNode : public ASTNode {
     public:
         NodeType m_type=Node_variable;
@@ -125,16 +130,16 @@ class VariableNode : public ASTNode {
         string identifier;
 };
 
-//Calls a function "indentifier(args)"
+// Calls a function "indentifier(args)"
 class CallNode : public ASTNode {
     public:
         NodeType m_type=Node_call;
         virtual int getName() {return m_type;};
         unique_ptr<VariableNode> identifier;
-        vector<unique_ptr<ASTNode>> args;
+        AST_vector args;
 };
 
-//Assigns a value to a variable
+// Assigns a value to a variable
 class AssignmentNode : public ASTNode {
     public:
         NodeType m_type=Node_assignment;
@@ -144,7 +149,15 @@ class AssignmentNode : public ASTNode {
         Types type=Type_auto;
 };
 
-//Creates a function
+// Program Chunks
+class ChunkNode : public ASTNode {
+    public:
+        NodeType m_type=Node_chunk;
+        virtual int getName() {return m_type;};
+        AST_vector program;
+};
+
+// Creates a function
 class FuncNode : public ASTNode {
     public:
         NodeType m_type=Node_func;
@@ -154,30 +167,25 @@ class FuncNode : public ASTNode {
         vector<tuple<string,Types,unique_ptr<ASTNode>>> params;
 };
 
-//If statement
+// If statement
 class IfNode : public ASTNode {
     public:
         NodeType m_type=Node_if;
         virtual int getName() {return m_type;};
         unique_ptr<ASTNode> expression;
-        vector<unique_ptr<ASTNode>> program;
+        unique_ptr<ASTNode> program;
         bool elsed=false;
-        vector<unique_ptr<ASTNode>> else_program;
+        unique_ptr<ASTNode> else_program;
 };
 
-//While loops
+// While loops
 class WhileNode : public ASTNode {
     public:
         NodeType m_type=Node_while;
         virtual int getName() {return m_type;};
         unique_ptr<ASTNode> expression;
-        vector<unique_ptr<ASTNode>> program;
+        unique_ptr<ASTNode> program;
         bool top;
 };
-
-
-typedef pair<unique_ptr<ASTNode>,int> Node_package;
-typedef vector<pair<Tokens,string>> Token_vector;
-typedef vector<unique_ptr<ASTNode>> AST_vector;
 
 #endif

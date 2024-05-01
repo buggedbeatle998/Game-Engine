@@ -11,7 +11,7 @@ using namespace std;
 
 
 int main(int argc, char *argv[]) {
-    printf("Hello World!");
+    printf("Hello World!\n");
     while (true) {
         string inputted;
         getline(cin >> ws, inputted);
@@ -70,11 +70,6 @@ int main(int argc, char *argv[]) {
             printf("%s\n", translator(coded).c_str());
             
             continue;
-        }
-
-        if (command == "find") {
-            for (const auto &entry : filesystem::directory_iterator(cd))
-                printf("%s\n", entry.path().c_str());
         }
     }
 

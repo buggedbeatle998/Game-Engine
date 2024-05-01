@@ -11,6 +11,7 @@
                 "${fileDirname}\\**.cpp",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-static-libstdc++"
                 //"-std=c++23"
             ],
             "options": {
